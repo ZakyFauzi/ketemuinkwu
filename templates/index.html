@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Lost & Found</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 350px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input { width: 100%; padding: 10px; margin: 8px 0 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { background: #3498db; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-green { background: #27ae60; }
+    </style>
+</head>
+<body>
+    <h2 style="color: #2c3e50;">Lost & Found Portal</h2>
+    
+    <div class="card">
+        <h3 style="margin-top: 0;">Login Dashboard</h3>
+        <form action="/login" method="POST">
+            <label>Tag ID</label>
+            <input type="text" name="tag_id" placeholder="e.g. a1b2c3d4" required>
+            <label>PIN</label>
+            <input type="password" name="pin" placeholder="****" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top: 0; color: #27ae60;">Activate New Tag</h3>
+        <p style="font-size: 12px; color: gray; margin-top: -10px;">Got a new tag? Register it here.</p>
+        <form action="/activate" method="POST">
+            <label>Tag ID</label>
+            <input type="text" name="tag_id" placeholder="ID from packaging or scan" required>
+            <label>Item Name</label>
+            <input type="text" name="item_name" placeholder="e.g. Laptop Bag" required>
+            <label>Create PIN</label>
+            <input type="password" name="pin" placeholder="Create 4-digit PIN" required>
+            <button type="submit" class="btn-green">Activate Tag</button>
+        </form>
+    </div>
+</body>
+</html>

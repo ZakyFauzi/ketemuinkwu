@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 15px; display: flex; justify-content: center; }
+        .container { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; box-sizing: border-box; }
+        button { background: #27ae60; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-map { background: #f39c12; margin-bottom: 10px; }
+        .chat-box { border: 1px solid #eee; border-radius: 8px; padding: 15px; height: 200px; overflow-y: auto; background: #fafafa; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+        .msg { padding: 10px 14px; border-radius: 18px; max-width: 85%; font-size: 14px; }
+        .msg.owner { background: #dcf8c6; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.finder { background: #fff; border: 1px solid #ddd; align-self: flex-start; border-bottom-left-radius: 4px; }
+        /* CSS BARU UNTUK KOTAK PERINGATAN */
+        .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; line-height: 1.4; }
+        .section-title { font-size: 14px; font-weight: bold; color: #bdc3c7; border-bottom: 1px solid #eee; margin-bottom: 10px; padding-bottom: 5px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 5px;">Dashboard</h2>
+        <div style="text-align: center; color: #7f8c8d; margin-bottom: 15px;">Item: <strong>{{ item[1] }}</strong> | ID: {{ item[0] }}</div>
+        
+        <div class="section-title">📍 LIVE GPS</div>
+        
+        <div class="alert-warning">
+            <strong>⚠️ Perhatian:</strong> Jika Anda membuat janji temu untuk mengambil barang, pastikan bertemu di <b>tempat umum yang aman dan ramai</b>.
+        </div>
+
+        {% if item[4] and item[5] %}
+            <a href="https://www.google.com/maps?q={{ item[4] }},{{ item[5] }}" target="_blank" style="text-decoration: none;">
+                <button class="btn-map">🗺️ Open Map Location</button>
+            </a>
+        {% else %}
+            <p style="text-align: center; font-size: 13px; color: #95a5a6; margin: 10px 0;">No location received yet.</p>
+        {% endif %}
+
+        <div class="section-title">💬 CHAT WITH FINDER</div>
+        
+        <div class="alert-warning">
+            <strong>🔒 Jaga Privasi Anda:</strong> Hindari membagikan alamat rumah pribadi atau informasi finansial kepada penemu. Gunakan chat anonim ini seperlunya.
+        </div>
+
+        <div class="chat-box" id="chatbox">
+            {% for chat in chat_history %}
+                {% if chat[0] == 'owner' %}
+                    <div class="msg owner">{{ chat[1] }}</div>
+                {% else %}
+                    <div class="msg finder">{{ chat[1] }}</div>
+                {% endif %}
+            {% else %}
+                <div style="text-align: center; color: #aaa; font-size: 13px; margin: auto;">Waiting for messages...</div>
+            {% endfor %}
+        </div>
+
+        <form action="/send_message/{{ item[0] }}" method="POST" style="display: flex; gap: 5px;">
+            <input type="hidden" name="sender" value="owner">
+            <input type="hidden" name="pin" value="{{ pin }}">
+            <input type="text" name="message" placeholder="Reply..." required style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+            <button type="submit" style="width: auto; padding: 0 15px;">Send</button>
+        </form>
+        
+        <button style="background: #ecf0f1; color: #2c3e50; margin-top: 15px;" onclick="window.location.reload();">🔄 Refresh Dashboard</button>
+        
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="/" style="font-size: 12px; color: #e74c3c; text-decoration: none;">Logout</a>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chatbox"); chatBox.scrollTop = chatBox.scrollHeight;
+    </script>
+</body>
+</html>

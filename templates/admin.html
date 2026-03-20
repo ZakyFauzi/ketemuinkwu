@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Penjual</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px; text-align: center; background: #2c3e50; color: white;">
+    <h2>Admin Panel (Secret)</h2>
+    
+    <div style="max-width: 400px; margin: auto; background: #34495e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <form action="/generate_blank" method="POST">
+            <button type="submit" style="padding: 15px; width: 100%; font-size: 16px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">➕ Generate New NFC Tag</button>
+        </form>
+        
+        {% if blank_link %}
+            <div style="background: white; color: black; padding: 20px; margin-top: 20px; border-radius: 8px; text-align: left;">
+                <h3 style="margin-top: 0;">Tag ID: <span style="color: #e74c3c;">{{ tag_id }}</span></h3>
+                <p style="font-size: 13px; color: gray; margin-bottom: 5px;">Write this URL to NFC:</p>
+                
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="nfcUrl" value="{{ blank_link }}" readonly onclick="this.select();" style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; background: #f9f9f9; font-size: 14px;">
+                    <button id="copyBtn" onclick="copyURL()" style="background: #3498db; color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; white-space: nowrap; transition: 0.3s;">Copy</button>
+                </div>
+            </div>
+        {% endif %}
+
+        <br><br>
+        <a href="/admin_logout" style="color: #bdc3c7; text-decoration: none; font-size: 13px; border: 1px solid #bdc3c7; padding: 8px 15px; border-radius: 6px;">🚪 Logout Admin</a>
+    </div>
+
+    <script>
+        function copyURL() {
+            var copyText = document.getElementById("nfcUrl");
+            var btn = document.getElementById("copyBtn");
+            
+            // Pilih text di dalam input
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // Untuk dukungan di perangkat mobile
+            
+            // Eksekusi perintah copy ke clipboard
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                // Ubah tampilan tombol saat berhasil
+                btn.innerText = "Copied! ✅";
+                btn.style.background = "#27ae60";
+                
+                // Kembalikan tombol seperti semula setelah 2 detik
+                setTimeout(() => {
+                    btn.innerText = "Copy";
+                    btn.style.background = "#3498db";
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                btn.innerText = "Failed ❌";
+            });
+        }
+    </script>
+</body>
+</html>
