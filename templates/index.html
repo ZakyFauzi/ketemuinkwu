@@ -1,42 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Platform Lost & Found</title>
+    <title>Ketemuin - Platform Lost & Found NFC</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 350px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input { width: 100%; padding: 10px; margin: 8px 0 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { background: #3498db; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-green { background: #27ae60; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 20px;
+        }
+        
+        .card p {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 18px;
+        }
+        
+        .form-group {
+            margin-bottom: 14px;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 6px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 11px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 13px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-top: 5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .hint {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-top: 4px;
+            display: block;
+        }
+        
+        .note-box {
+            background: #f0f3ff;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .section-divider {
+            text-align: center;
+            margin: 25px 0 15px;
+            color: #bdc3c7;
+            font-size: 13px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <h2 style="color: #2c3e50;">Lost & Found Portal</h2>
-    
-    <div class="card">
-        <h3 style="margin-top: 0;">Login Dashboard</h3>
-        <form action="/login" method="POST">
-            <label>Tag ID</label>
-            <input type="text" name="tag_id" placeholder="e.g. a1b2c3d4" required>
-            <label>PIN</label>
-            <input type="password" name="pin" placeholder="****" required>
-            <button type="submit">Login</button>
-        </form>
+    <div class="header">
+        <h1>🔑 Ketemuin</h1>
+        <p>Platform Lost & Found dengan teknologi NFC</p>
     </div>
-
-    <div class="card">
-        <h3 style="margin-top: 0; color: #27ae60;">Activate New Tag</h3>
-        <p style="font-size: 12px; color: gray; margin-top: -10px;">Got a new tag? Register it here.</p>
-        <form action="/activate" method="POST">
-            <label>Tag ID</label>
-            <input type="text" name="tag_id" placeholder="ID from packaging or scan" required>
-            <label>Item Name</label>
-            <input type="text" name="item_name" placeholder="e.g. Laptop Bag" required>
-            <label>Create PIN</label>
-            <input type="password" name="pin" placeholder="Create 4-digit PIN" required>
-            <button type="submit" class="btn-green">Activate Tag</button>
-        </form>
+    
+    <div class="container">
+        <!-- Login Card -->
+        <div class="card">
+            <h3>🔓 Login Dashboard</h3>
+            <p>Sudah punya tag? Akses dashboard mu di sini.</p>
+            <div class="note-box">
+                💡 Login dengan Tag ID dan PIN mu untuk melihat status barang.
+            </div>
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label>Tag ID</label>
+                    <input type="text" name="tag_id" placeholder="Contoh: a1b2c3d4" required>
+                </div>
+                <div class="form-group">
+                    <label>PIN</label>
+                    <input type="password" name="pin" placeholder="Masukkan 4 digit PIN mu" required>
+                </div>
+                <button type="submit">🚀 Masuk Dashboard</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h3>🛒 Registrasi Tag Oleh Admin</h3>
+            <p>Aktivasi tag dilakukan oleh admin/penjual berdasarkan data form pembelian.</p>
+            <div class="note-box">
+                Jika kamu pembeli, cukup scan NFC dan gunakan halaman yang muncul. Jika perlu bantuan login dashboard, hubungi admin penjual.
+            </div>
+        </div>
     </div>
 </body>
 </html>

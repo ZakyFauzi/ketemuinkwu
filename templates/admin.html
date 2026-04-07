@@ -7,14 +7,41 @@
 <body style="font-family: sans-serif; padding: 20px; text-align: center; background: #2c3e50; color: white;">
     <h2>Admin Panel (Secret)</h2>
     
-    <div style="max-width: 400px; margin: auto; background: #34495e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-        <form action="/generate_blank" method="POST">
-            <button type="submit" style="padding: 15px; width: 100%; font-size: 16px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">➕ Generate New NFC Tag</button>
-        </form>
+    <div style="max-width: 700px; margin: auto; background: #34495e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h3 style="margin-top: 0; text-align: center;">Setup Tag Langsung (Admin)</h3>
+            <p style="font-size: 13px; color: #bdc3c7; text-align: center; margin-top: -5px;">Isi data pembeli dari form order, lalu generate URL NFC unik siap pakai.</p>
+
+            <form action="/admin_create_tag" method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <input type="text" name="item_name" placeholder="Nama Barang" required style="padding: 10px; border-radius: 6px; border: none;">
+                <input type="password" name="pin" placeholder="PIN Owner" required style="padding: 10px; border-radius: 6px; border: none;">
+                <input type="text" name="owner_name" placeholder="Nama Owner" required style="padding: 10px; border-radius: 6px; border: none;">
+                <input type="text" name="owner_whatsapp" placeholder="WhatsApp Owner (628...)" required style="padding: 10px; border-radius: 6px; border: none;">
+                <input type="email" name="owner_email" placeholder="Email Owner" required style="padding: 10px; border-radius: 6px; border: none;">
+                <input type="text" name="owner_telegram_id" placeholder="Telegram ID (opsional)" style="padding: 10px; border-radius: 6px; border: none;">
+                <input type="url" name="owner_avatar" placeholder="Avatar URL (opsional)" style="padding: 10px; border-radius: 6px; border: none; grid-column: 1 / -1;">
+                <textarea name="owner_bio" placeholder="Bio owner (opsional)" style="padding: 10px; border-radius: 6px; border: none; min-height: 70px; grid-column: 1 / -1;"></textarea>
+                <select name="notification_method" style="padding: 10px; border-radius: 6px; border: none; grid-column: 1 / -1;">
+                    <option value="email">Email</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="both">Email + Telegram</option>
+                </select>
+                <button type="submit" style="padding: 12px; font-size: 15px; background: #f39c12; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; grid-column: 1 / -1;">⚡ Buat Tag Siap Pakai + Generate URL NFC</button>
+            </form>
+
+            <hr style="border: none; border-top: 1px solid #4b6278; margin: 16px 0;">
+
+            <div style="text-align: center;">
+                <form action="/generate_blank" method="POST">
+                    <button type="submit" style="padding: 12px; width: 100%; font-size: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">➕ Generate Blank NFC Tag (Opsional)</button>
+                </form>
+            </div>
         
         {% if blank_link %}
             <div style="background: white; color: black; padding: 20px; margin-top: 20px; border-radius: 8px; text-align: left;">
                 <h3 style="margin-top: 0;">Tag ID: <span style="color: #e74c3c;">{{ tag_id }}</span></h3>
+                    {% if created_ready %}
+                        <p style="font-size: 13px; color: #27ae60; margin-top: -5px;">Tag sudah aktif dan siap scan.</p>
+                    {% endif %}
                 <p style="font-size: 13px; color: gray; margin-bottom: 5px;">Write this URL to NFC:</p>
                 
                 <div style="display: flex; gap: 5px;">
