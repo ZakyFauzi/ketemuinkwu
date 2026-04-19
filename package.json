@@ -1,0 +1,12 @@
+{
+  "name": "ketemuin-free-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ketemuin static frontend with Netlify Functions for notifications",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "nodemailer": "^6.10.0"
+  }
+}

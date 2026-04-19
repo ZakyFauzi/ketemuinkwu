@@ -48,7 +48,21 @@ netlify.toml sudah handle rewrite route /admin dan /profile/* ke index.html.
 
 vercel.json sudah handle rewrite semua route ke index.html.
 
-## 5) Cek flow
+## 5) Setup notifikasi otomatis
+
+Kalau kamu mau email dan Telegram benar-benar terkirim otomatis dari tombol share lokasi / kirim pesan, isi environment variable ini di Netlify:
+
+- `EMAIL_SENDER`
+- `EMAIL_PASSWORD`
+- `SMTP_SERVER`
+- `SMTP_PORT`
+- `TELEGRAM_BOT_TOKEN`
+
+Catatan Telegram:
+- Isi field Telegram dengan `chat_id` atau channel/group username yang bisa dijangkau bot
+- Username personal biasa tidak selalu bisa dipakai untuk kirim otomatis
+
+## 6) Cek flow
 
 - / -> landing
 - /admin -> login admin

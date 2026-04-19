@@ -535,8 +535,8 @@
                             <input id="fEmail" type="email" placeholder="budi@email.com">
                         </div>
                         <div>
-                            <label>Telegram Username</label>
-                            <input id="fTg" placeholder="budiowner">
+                            <label>Telegram Chat ID / Channel</label>
+                            <input id="fTg" placeholder="@channelatau-chat-id">
                         </div>
                         <div>
                             <label>Avatar URL</label>
@@ -649,23 +649,6 @@
             await loadMyOwners();
         }
 
-        function buildChannelLink(owner, method, messageText) {
-            const msg = encodeURIComponent(messageText);
-            if (method === "wa") {
-                return `https://api.whatsapp.com/send?phone=${encodeURIComponent(owner.owner_whatsapp || "")}&text=${msg}`;
-            }
-            if (method === "email") {
-                return `mailto:${encodeURIComponent(owner.owner_email || "")}?subject=${encodeURIComponent("Info Barang Ketemuin")}&body=${msg}`;
-            }
-            if (method === "telegram") {
-                if (!owner.owner_telegram) {
-                    return "";
-                }
-                return `https://t.me/${encodeURIComponent(owner.owner_telegram)}?text=${msg}`;
-            }
-            return "";
-        }
-
         async function publicProfileView(shortId) {
             const app = document.getElementById("app");
             const q = await sb.from("owners").select("*").eq("short_id", shortId).single();
@@ -705,32 +688,20 @@
                         <button class="btn btn-soft" id="jumpGameBtn">Game Ringan</button>
                     </div>
 
-                    <div class="row" style="margin-top:10px;">
-                        ${owner.owner_email ? `<a class="btn btn-primary" href="${buildChannelLink(owner, "email", "Halo, saya menemukan barangmu.")}">Kirim Email</a>` : ""}
-                        ${owner.owner_telegram ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "telegram", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Kirim Telegram</a>` : ""}
-                    </div>
-
                     <hr class="divider" id="shareSection">
 
                     <h3>Bagikan Lokasi</h3>
-                    <p class="lead">Klik sekali untuk menyimpan lokasi penemuan. Setelah itu kamu bisa lanjut kirim email atau Telegram ke pemilik.</p>
+                    <p class="lead">Klik sekali untuk menyimpan lokasi penemuan. Sistem akan mengirim notifikasi otomatis ke email dan Telegram pemilik jika tersedia.</p>
                     <div id="locStatus"></div>
 
                     <hr class="divider" id="notifySection">
 
                     <h3>Beri Tahu Pemilik</h3>
-                    <p class="lead">Satu pesan singkat, lalu channel komunikasi via email atau Telegram akan dibuka.</p>
+                    <p class="lead">Satu pesan singkat, lalu sistem akan kirim notifikasi otomatis ke email dan Telegram pemilik jika tersedia.</p>
                     <div class="form-grid">
                         <div>
                             <label>Nama Kamu</label>
                             <input id="finderName" placeholder="Nama kamu">
-                        </div>
-                        <div>
-                            <label>Channel</label>
-                            <select id="finderMethod">
-                                <option value="email" ${owner.owner_email ? "selected" : "disabled"}>Email</option>
-                                <option value="telegram" ${owner.owner_telegram ? "" : "disabled"}>Telegram</option>
-                            </select>
                         </div>
                         <div class="full">
                             <label>Pesan</label>
@@ -786,7 +757,24 @@
                         return;
                     }
 
-                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div>`;
+                    const notify = await fetch("/.netlify/functions/notify", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            type: "location",
+                            owner,
+                            mapsUrl: maps,
+                            pageUrl: window.location.href
+                        })
+                    });
+
+                    if (!notify.ok) {
+                        const detail = await notify.text();
+                        slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div><div class="status err" style="margin-top:8px;">Notifikasi gagal dikirim: ${esc(detail || "unknown error")}</div>`;
+                        return;
+                    }
+
+                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div><div class="status ok" style="margin-top:8px;">Notifikasi email/Telegram terkirim.</div>`;
                 }, () => {
                     slot.innerHTML = status("err", "Izin lokasi ditolak atau gagal dibaca.");
                 });
@@ -853,7 +841,6 @@
 
             document.getElementById("sendBtn").addEventListener("click", async () => {
                 const finderName = document.getElementById("finderName").value.trim() || "Penemu";
-                const finderMethod = document.getElementById("finderMethod").value;
                 const msg = document.getElementById("finderMessage").value.trim();
                 const slot = document.getElementById("msgStatus");
 
@@ -865,7 +852,7 @@
                 const save = await sb.from("messages").insert({
                     owner_id: owner.id,
                     finder_name: finderName,
-                    finder_method: finderMethod,
+                    finder_method: "auto",
                     message_text: msg
                 });
 
@@ -874,13 +861,25 @@
                     return;
                 }
 
-                const full = `[Ketemuin] ${finderName}: ${msg}`;
-                const channelLink = buildChannelLink(owner, finderMethod, full);
-                if (channelLink) {
-                    window.open(channelLink, "_blank", "noopener,noreferrer");
+                const notify = await fetch("/.netlify/functions/notify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        type: "message",
+                        owner,
+                        finderName,
+                        messageText: msg,
+                        pageUrl: window.location.href
+                    })
+                });
+
+                if (!notify.ok) {
+                    const detail = await notify.text();
+                    slot.innerHTML = status("err", detail || "Gagal mengirim notifikasi.");
+                    return;
                 }
 
-                slot.innerHTML = status("ok", "Pesan tersimpan dan channel komunikasi dibuka.");
+                slot.innerHTML = status("ok", "Pesan tersimpan dan notifikasi email/Telegram sudah dikirim.");
                 document.getElementById("finderMessage").value = "";
             });
         }

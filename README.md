@@ -16,7 +16,7 @@ Arsitektur baru:
 - Finder bisa:
   - kirim pesan (tersimpan ke database)
   - share lokasi (tersimpan ke database)
-  - buka channel WhatsApp/Email/Telegram
+  - kirim notifikasi otomatis ke email dan Telegram via Netlify Function
 
 ## Setup sekali saja
 
@@ -50,6 +50,7 @@ Vercel:
 - File supabase-config.js jangan di-commit
 - .gitignore sudah mengecualikan supabase-config.js
 - .env dan app.py sekarang tidak dipakai untuk arsitektur ini
+- Kalau mau notifikasi email dan Telegram otomatis, set environment variable di Netlify untuk fungsi serverless
 
 ## Struktur file penting
 
