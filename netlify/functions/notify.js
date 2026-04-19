@@ -14,72 +14,163 @@ function json(statusCode, payload, headers = {}) {
 }
 
 function getEnv(key) {
-  const value = process.env[key];
-  return String(value || "").trim();
+  return String(process.env[key] || "").trim();
 }
 
-function buildEmailText(type, owner, finderName, messageText, mapsUrl, pageUrl) {
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildNotificationData(type, owner, finderName, messageText, mapsUrl, pageUrl) {
   const itemName = owner?.item_name || "Barang";
   const ownerName = owner?.owner_name || "Pemilik";
-  const header = type === "location"
-    ? `Lokasi baru ditemukan untuk ${itemName}`
-    : `Pesan baru untuk ${itemName}`;
+  const title = type === "location"
+    ? "Update lokasi penemuan barang"
+    : "Pesan baru dari penemu barang";
+  const subtitle = type === "location"
+    ? "Seseorang membagikan titik lokasi penemuan barang Anda."
+    : "Seseorang mengirimkan pesan terkait barang Anda.";
 
+  return {
+    itemName,
+    ownerName,
+    title,
+    subtitle,
+    finderName: finderName || "Penemu",
+    messageText: messageText || "-",
+    mapsUrl: mapsUrl || "-",
+    pageUrl: pageUrl || "-",
+    type,
+  };
+}
+
+function buildEmailText(data) {
   const lines = [
-    header,
-    `Pemilik: ${ownerName}`,
-    `Barang: ${itemName}`,
+    "KETEMUIN - NOTIFIKASI BARU",
+    "",
+    data.title,
+    data.subtitle,
+    "",
+    `Pemilik: ${data.ownerName}`,
+    `Barang: ${data.itemName}`,
+    `Dari: ${data.finderName}`,
   ];
 
-  if (finderName) {
-    lines.push(`Dari: ${finderName}`);
+  if (data.type === "message") {
+    lines.push(`Pesan: ${data.messageText}`);
   }
 
-  if (type === "location" && mapsUrl) {
-    lines.push(`Maps: ${mapsUrl}`);
+  if (data.type === "location") {
+    lines.push(`Lokasi: ${data.mapsUrl}`);
   }
 
-  if (type === "message" && messageText) {
-    lines.push(`Pesan: ${messageText}`);
-  }
-
-  if (pageUrl) {
-    lines.push(`Profil: ${pageUrl}`);
-  }
+  lines.push(`Profil: ${data.pageUrl}`);
+  lines.push("");
+  lines.push("Pesan ini dikirim otomatis oleh sistem Ketemuin.");
 
   return lines.join("\n");
 }
 
-function buildTelegramText(type, owner, finderName, messageText, mapsUrl, pageUrl) {
-  const itemName = owner?.item_name || "Barang";
-  const ownerName = owner?.owner_name || "Pemilik";
-  const header = type === "location"
-    ? `Lokasi baru untuk ${itemName}`
-    : `Pesan baru untuk ${itemName}`;
-
-  const lines = [
-    `Ketemuin`,
-    header,
-    `Pemilik: ${ownerName}`,
+function buildEmailHtml(data) {
+  const rows = [
+    { label: "Pemilik", value: escapeHtml(data.ownerName) },
+    { label: "Barang", value: escapeHtml(data.itemName) },
+    { label: "Dari", value: escapeHtml(data.finderName) },
   ];
 
-  if (finderName) {
-    lines.push(`Dari: ${finderName}`);
+  if (data.type === "message") {
+    rows.push({ label: "Pesan", value: escapeHtml(data.messageText) });
   }
 
-  if (type === "location" && mapsUrl) {
-    lines.push(`Maps: ${mapsUrl}`);
+  if (data.type === "location") {
+    rows.push({
+      label: "Lokasi",
+      value: `<a href="${escapeHtml(data.mapsUrl)}" target="_blank" rel="noopener noreferrer">Buka Google Maps</a>`,
+    });
   }
 
-  if (type === "message" && messageText) {
-    lines.push(`Pesan: ${messageText}`);
+  rows.push({
+    label: "Profil",
+    value: `<a href="${escapeHtml(data.pageUrl)}" target="_blank" rel="noopener noreferrer">Lihat Halaman Profil</a>`,
+  });
+
+  const rowHtml = rows
+    .map((row) => `
+      <tr>
+        <td style="padding:10px 12px; border:1px solid #d8e2ee; width:140px; color:#4f6480; font-weight:600;">${row.label}</td>
+        <td style="padding:10px 12px; border:1px solid #d8e2ee; color:#16304d;">${row.value}</td>
+      </tr>`)
+    .join("");
+
+  return `
+  <!doctype html>
+  <html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi Ketemuin</title>
+  </head>
+  <body style="margin:0; padding:0; background:#f2f5f8; font-family:Segoe UI, Tahoma, Arial, sans-serif; color:#16304d;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f2f5f8; padding:24px 10px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="640" cellspacing="0" cellpadding="0" style="max-width:640px; background:#ffffff; border:1px solid #d8e2ee; border-radius:12px; overflow:hidden;">
+            <tr>
+              <td style="background:linear-gradient(120deg,#0b467f 0%, #0f6ecd 100%); padding:20px 24px; color:#ffffff;">
+                <div style="font-size:12px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.9;">Ketemuin</div>
+                <h1 style="margin:6px 0 0; font-size:22px; line-height:1.25;">${escapeHtml(data.title)}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 24px 8px; color:#4f6480; font-size:14px;">${escapeHtml(data.subtitle)}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 24px 20px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse; font-size:14px;">
+                  ${rowHtml}
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 24px 20px; font-size:12px; color:#6b7f97;">
+                Pesan ini dikirim otomatis oleh sistem Ketemuin. Mohon jangan membalas email ini.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+  </html>`;
+}
+
+function buildTelegramText(data) {
+  const sections = [
+    "KETEMUIN - NOTIFIKASI BARU",
+    `${data.title}`,
+    "",
+    `Pemilik: ${data.ownerName}`,
+    `Barang: ${data.itemName}`,
+    `Dari: ${data.finderName}`,
+  ];
+
+  if (data.type === "message") {
+    sections.push(`Pesan: ${data.messageText}`);
   }
 
-  if (pageUrl) {
-    lines.push(`Profil: ${pageUrl}`);
+  if (data.type === "location") {
+    sections.push(`Lokasi: ${data.mapsUrl}`);
   }
 
-  return lines.join("\n");
+  sections.push(`Profil: ${data.pageUrl}`);
+  sections.push("Sistem Ketemuin");
+
+  return sections.join("\n");
 }
 
 async function sendTelegramMessage(text, target, botToken) {
@@ -125,14 +216,7 @@ exports.handler = async (event) => {
     return json(400, { error: "Invalid JSON body" });
   }
 
-  const {
-    type,
-    owner,
-    finderName,
-    messageText,
-    mapsUrl,
-    pageUrl,
-  } = body;
+  const { type, owner, finderName, messageText, mapsUrl, pageUrl } = body;
 
   if (!owner || !type || !["location", "message"].includes(type)) {
     return json(400, { error: "Invalid payload" });
@@ -148,14 +232,16 @@ exports.handler = async (event) => {
   const telegramTarget = String(owner.owner_telegram || "").trim();
   const whatsappTarget = String(owner.owner_whatsapp || "").trim();
 
+  const data = buildNotificationData(type, owner, finderName, messageText, mapsUrl, pageUrl);
+  const textForEmail = buildEmailText(data);
+  const htmlForEmail = buildEmailHtml(data);
+  const textForTelegram = buildTelegramText(data);
+
   const results = {
     email: { sent: false, skipped: true },
     telegram: { sent: false, skipped: true },
     whatsapp: { sent: false, skipped: true },
   };
-
-  const textForEmail = buildEmailText(type, owner, finderName, messageText, mapsUrl, pageUrl);
-  const textForTelegram = buildTelegramText(type, owner, finderName, messageText, mapsUrl, pageUrl);
 
   if (emailTarget && emailSender && emailPassword && smtpServer) {
     try {
@@ -172,8 +258,11 @@ exports.handler = async (event) => {
       await transporter.sendMail({
         from: `Ketemuin <${emailSender}>`,
         to: emailTarget,
-        subject: type === "location" ? `Lokasi baru untuk ${owner.item_name || "barang"}` : `Pesan baru untuk ${owner.item_name || "barang"}`,
+        subject: type === "location"
+          ? `[Ketemuin] Update Lokasi: ${data.itemName}`
+          : `[Ketemuin] Pesan Baru: ${data.itemName}`,
         text: textForEmail,
+        html: htmlForEmail,
       });
 
       results.email = { sent: true };
@@ -204,7 +293,7 @@ exports.handler = async (event) => {
       const whatsappLink = `https://api.whatsapp.com/send?phone=${encodeURIComponent(whatsappTarget)}&text=${encodeURIComponent(textForTelegram)}`;
       results.whatsapp = {
         sent: true,
-        note: "WhatsApp link generated (user must click to send)",
+        note: "WhatsApp link generated",
         link: whatsappLink,
       };
     } catch (error) {

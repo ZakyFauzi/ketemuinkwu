@@ -110,10 +110,79 @@
 
         .panel h2 { font-size: 24px; margin-bottom: 6px; color: #0d4378; }
         .panel h3 { font-size: 18px; margin-bottom: 8px; }
-        .lead { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+        .lead { color: var(--muted); font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700; margin-bottom: 14px; }
 
         .feature h3 { color: #0d4378; margin-bottom: 4px; font-size: 17px; }
-        .feature p { color: var(--muted); font-size: 14px; }
+        .feature p { color: var(--muted); font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700; }
+
+        .landing-stack {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .stat-card {
+            background: #f7fbff;
+            border: 1px solid #d8e7fa;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .stat-card b {
+            display: block;
+            font-size: 22px;
+            color: #0d4378;
+            margin-bottom: 4px;
+        }
+
+        .plain-list {
+            margin: 8px 0 0;
+            padding-left: 18px;
+            color: var(--muted);
+            font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+        }
+
+        .plain-list li { margin-bottom: 6px; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .team-role {
+            border: 1px solid #d8e2ee;
+            border-radius: 10px;
+            padding: 10px;
+            background: #ffffff;
+        }
+
+        .team-role b { color: #0d4378; display: block; margin-bottom: 4px; }
+
+        .purchase-box {
+            background: #fff8ef;
+            border: 1px solid #ffdcb0;
+            border-radius: 12px;
+            padding: 14px;
+        }
 
         .form-grid {
             display: grid;
@@ -137,6 +206,8 @@
             border-radius: 10px;
             padding: 11px 12px;
             font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700;
             font-family: inherit;
             background: #fff;
             color: var(--ink);
@@ -161,6 +232,8 @@
             border-radius: 10px;
             padding: 11px 15px;
             font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -251,7 +324,9 @@
         }
 
         .divider { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
-        .empty { color: var(--muted); font-size: 14px; }
+        .empty { color: var(--muted); font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700; }
 
         .setup-note {
             background: #fff3e6;
@@ -306,10 +381,12 @@
             height: 70px;
             border: none;
             border-radius: 18px;
-            background: linear-gradient(180deg, #ffd36e 0%, #ff9f43 100%);
-            color: #5b3400;
-            font-size: 34px;
-            box-shadow: 0 10px 16px rgba(255, 159, 67, 0.25);
+            background: linear-gradient(180deg, #0f6ecd 0%, #0b4f93 100%);
+            color: #ffffff;
+            font-size: 14px;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+            box-shadow: 0 10px 16px rgba(11, 79, 147, 0.25);
             cursor: pointer;
             transition: transform .16s ease, left .16s ease, top .16s ease;
         }
@@ -350,6 +427,9 @@
             .grid { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr; }
             .game-grid { grid-template-columns: 1fr; }
+            .two-col { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .team-grid { grid-template-columns: 1fr; }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -453,29 +533,91 @@
             const app = document.getElementById("app");
             app.innerHTML = `
                 <section class="hero">
-                    <h1>Bukan prototype lagi. Sekarang cloud storage gratis.</h1>
+                    <h1>Ketemuin: Smart Keychain NFC untuk Lost & Found yang lebih efektif</h1>
                     <p>
-                        Ketemuin Free Cloud Edition pakai Supabase. Frontend tetap static,
-                        tapi data owner, pesan, dan lokasi tersimpan online lintas device.
+                        Ketemuin adalah solusi berbasis produk fisik dan platform digital untuk mempercepat proses
+                        pengembalian barang hilang, tetap menjaga privasi pemilik, dan menggunakan material ramah lingkungan.
                     </p>
                     <div class="row">
                         <button class="btn btn-primary" id="heroAdmin">Masuk Admin</button>
                     </div>
                 </section>
 
-                <section class="grid">
-                    <article class="panel feature">
-                        <h3>Tanpa Flask</h3>
-                        <p>Deploy langsung ke Netlify atau Vercel tanpa server Python.</p>
-                    </article>
-                    <article class="panel feature">
-                        <h3>Data Cloud Gratis</h3>
-                        <p>Supabase free tier cukup untuk MVP dan demo production-like.</p>
-                    </article>
-                    <article class="panel feature">
-                        <h3>Admin Tetap Ada</h3>
-                        <p>Admin login pakai Supabase Auth, public hanya lihat profil.</p>
-                    </article>
+                <section class="landing-stack">
+                    <section class="panel">
+                        <h2>Masalah Utama</h2>
+                        <div class="stats-grid" style="margin-top:10px;">
+                            <article class="stat-card">
+                                <b>66,7%</b>
+                                <p>Pelajar dan mahasiswa sering kehilangan kunci atau barang kecil.</p>
+                            </article>
+                            <article class="stat-card">
+                                <b>77,8%</b>
+                                <p>Penemu ingin mengembalikan barang, tetapi tidak tahu identitas pemilik.</p>
+                            </article>
+                            <article class="stat-card">
+                                <b>500 tahun</b>
+                                <p>Limbah plastik PET membutuhkan waktu sangat lama untuk terurai.</p>
+                            </article>
+                        </div>
+                        <ul class="plain-list">
+                            <li>Sistem lost & found manual masih tidak efektif.</li>
+                            <li>Kontak pemilik sering tidak tersedia saat barang ditemukan.</li>
+                        </ul>
+                    </section>
+
+                    <section class="two-col">
+                        <article class="panel">
+                            <h3>Cara Kerja</h3>
+                            <ul class="plain-list">
+                                <li>Barang ditemukan.</li>
+                                <li>Penemu men-tap NFC keychain dengan smartphone.</li>
+                                <li>Sistem langsung mengarahkan penemu ke halaman kontak pemilik tanpa membuka data pribadi.</li>
+                            </ul>
+
+                            <h3 style="margin-top:14px;">Value Utama</h3>
+                            <ul class="plain-list">
+                                <li>Mudah: cukup 1 tap NFC.</li>
+                                <li>Personal custom untuk setiap pemilik.</li>
+                                <li>Aman: privacy protected.</li>
+                                <li>Ramah lingkungan.</li>
+                            </ul>
+                        </article>
+
+                        <article class="panel">
+                            <h3>Model Usaha</h3>
+                            <ul class="plain-list">
+                                <li>Jenis usaha: teknologi berbasis produk fisik.</li>
+                                <li>Menggabungkan hardware keychain NFC dengan software platform digital.</li>
+                                <li>Skala usaha: usaha mikro kecil.</li>
+                            </ul>
+
+                            <h3 style="margin-top:14px;">Product</h3>
+                            <ul class="plain-list">
+                                <li>Smart keychain berbasis NFC.</li>
+                                <li>Material ramah lingkungan (rPET).</li>
+                            </ul>
+                        </article>
+                    </section>
+
+                    <section class="panel">
+                        <h3>Tim Inti</h3>
+                        <div class="team-grid">
+                            <div class="team-role"><b>CEO</b>Muhammad Al Abrar</div>
+                            <div class="team-role"><b>CFO</b>Muflih Rafif Ibrahim</div>
+                            <div class="team-role"><b>CMO</b>Afiqah Nazifatul Latif, Muhammad Dzaki</div>
+                            <div class="team-role"><b>CTO</b>Wijdanadam Rafifilmi Nadarosula, Zaky Muhammad Fauzi</div>
+                            <div class="team-role"><b>COO</b>Anjaly Fatimah Mardiyana, Chavanraja Raynor Ma'mur, Salsabila Rizqiyah Anwar</div>
+                        </div>
+                    </section>
+
+                    <section class="purchase-box">
+                        <h3 style="margin-bottom:6px; color:#8a4e00;">Link Pembelian</h3>
+                        <p style="font-size:14px; color:#8a4e00; margin-bottom:10px;">
+                            Link pembelian akan di-update setelah produk siap dijual.
+                        </p>
+                        <a href="#" style="font-weight:700; color:#8a4e00; text-decoration:underline;">Update link pembelian di sini</a>
+                    </section>
                 </section>
             `;
             document.getElementById("heroAdmin").addEventListener("click", () => navigate("/admin"));
@@ -730,7 +872,7 @@
                     </div>
 
                     <section class="profile-section" id="shareSection">
-                        <h3>🌍 Bagikan Lokasi</h3>
+                        <h3>Bagikan Lokasi</h3>
                         <p>Klik sekali untuk menyimpan lokasi penemuan. Sistem akan mengirim notifikasi otomatis ke semua channel pemilik.</p>
                         <button class="btn btn-primary" id="shareLocBtn">Bagikan Lokasi Sekarang</button>
                         <div id="locStatus" style="margin-top:10px;"></div>
@@ -739,7 +881,7 @@
                     <hr class="divider">
 
                     <section class="profile-section" id="notifySection">
-                        <h3>📬 Beri Tahu Pemilik</h3>
+                        <h3>Beri Tahu Pemilik</h3>
                         <p>Satu pesan singkat, lalu sistem akan kirim notifikasi otomatis ke email, Telegram, dan WhatsApp pemilik jika tersedia.</p>
                         <div class="form-grid">
                             <div class="full">
@@ -760,20 +902,24 @@
                     <hr class="divider">
 
                     <section class="profile-section" id="gameSection">
-                        <h3>🎮 Game Ringan</h3>
-                        <p>Tangkap kucing yang pindah-pindah. Sederhana, cepat, dan lebih hidup.</p>
-                    <div class="mini-game">
-                        <div class="game-stage" id="gameStage">
-                            <button class="cat-target" id="catBtn" aria-label="Tangkap kucing">🐱</button>
+                        <h3>Game Ringan</h3>
+                        <p>Tangkap target selama waktu berjalan. Setiap attempt disimpan, jadi kamu bisa lawan skor sebelumnya.</p>
+                        <div class="mini-game">
+                            <div class="game-stage" id="gameStage">
+                                <button class="cat-target" id="catBtn" aria-label="Tangkap target">TAP</button>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <button class="btn btn-primary" id="startGameBtn">Mulai Attempt</button>
+                                <button class="btn btn-danger" id="resetGameBtn">Attempt Baru</button>
+                            </div>
+                            <div class="cat-score">
+                                <span id="gameStatus" class="game-state">Tekan Mulai Attempt untuk bermain.</span>
+                                <span id="gameTime">Waktu: 30s</span>
+                                <span id="gameScore">Skor: 0</span>
+                                <span id="bestScore">Best: 0</span>
+                            </div>
+                            <div id="gameHint" class="meta" style="margin-top:8px;"></div>
                         </div>
-                        <div class="row" style="margin-top:10px;">
-                            <button class="btn btn-danger" id="resetGameBtn">Reset Game</button>
-                        </div>
-                        <div class="cat-score">
-                            <span id="gameStatus" class="game-state">Kejar kucingnya.</span>
-                            <span id="gameScore">Skor: 0</span>
-                        </div>
-                    </div>
                     </section>
                 </section>
             `;
@@ -820,7 +966,7 @@
                         return;
                     }
 
-                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div><div class="status ok" style="margin-top:8px;">✓ Notifikasi ke email, Telegram, dan WhatsApp sudah dikirim.</div>`;
+                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div><div class="status ok" style="margin-top:8px;">Notifikasi terkirim ke channel yang tersedia.</div>`;
                 }, () => {
                     slot.innerHTML = status("err", "Izin lokasi ditolak atau gagal dibaca.");
                 });
@@ -837,12 +983,32 @@
                 document.getElementById("gameSection").scrollIntoView({ behavior: "smooth", block: "start" });
             });
 
-            const gameStage = document.getElementById("gameStage");
+                        const gameStage = document.getElementById("gameStage");
             const catBtn = document.getElementById("catBtn");
             const gameSlot = document.getElementById("gameStatus");
             const scoreSlot = document.getElementById("gameScore");
+            const timeSlot = document.getElementById("gameTime");
+            const bestSlot = document.getElementById("bestScore");
+            const hintSlot = document.getElementById("gameHint");
+            const startBtn = document.getElementById("startGameBtn");
+            const resetBtn = document.getElementById("resetGameBtn");
+
+            const bestKey = `ketemuin_best_${owner.short_id}`;
+            const lastKey = `ketemuin_last_${owner.short_id}`;
+
             let score = 0;
-            let catchCount = 0;
+            let timeLeft = 30;
+            let running = false;
+            let timerId = null;
+            let moverId = null;
+
+            function readScore(key) {
+                return Number(localStorage.getItem(key) || 0);
+            }
+
+            function writeScore(key, value) {
+                localStorage.setItem(key, String(value));
+            }
 
             function renderGameStatus(text) {
                 gameSlot.textContent = text;
@@ -862,28 +1028,101 @@
                 scoreSlot.textContent = `Skor: ${score}`;
             }
 
-            function resetGame() {
+            function refreshTimer() {
+                timeSlot.textContent = `Waktu: ${timeLeft}s`;
+            }
+
+            function refreshBest() {
+                bestSlot.textContent = `Best: ${readScore(bestKey)}`;
+            }
+
+            function stopLoops() {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+                if (moverId) {
+                    clearInterval(moverId);
+                    moverId = null;
+                }
+            }
+
+            function finishAttempt() {
+                running = false;
+                stopLoops();
+                const previousLast = readScore(lastKey);
+                const previousBest = readScore(bestKey);
+
+                writeScore(lastKey, score);
+                if (score > previousBest) {
+                    writeScore(bestKey, score);
+                    renderGameStatus(`Waktu habis. Skor baru terbaik: ${score}.`);
+                } else {
+                    renderGameStatus(`Waktu habis. Skor attempt ini: ${score}.`);
+                }
+
+                if (previousLast > 0 && score < previousLast) {
+                    hintSlot.innerHTML = 'Attempt ini lebih rendah dari sebelumnya. Coba motivasi ulang: <a href="https://www.youtube.com/watch?v=CC1pavDNUB0" target="_blank" rel="noopener noreferrer">video penyemangat</a>.';
+                } else {
+                    hintSlot.textContent = "";
+                }
+
+                refreshBest();
+            }
+
+            function resetAttemptUI() {
                 score = 0;
-                catchCount = 0;
+                timeLeft = 30;
                 refreshScore();
+                refreshTimer();
+                hintSlot.textContent = "";
                 moveCat();
-                renderGameStatus("Kucing kabur lagi. Coba tangkap.");
+            }
+
+            function startAttempt() {
+                resetAttemptUI();
+                running = true;
+                renderGameStatus("Attempt berjalan. Tangkap target sebanyak mungkin.");
+
+                timerId = window.setInterval(() => {
+                    timeLeft -= 1;
+                    refreshTimer();
+                    if (timeLeft <= 0) {
+                        finishAttempt();
+                    }
+                }, 1000);
+
+                moverId = window.setInterval(() => {
+                    if (running) {
+                        moveCat();
+                    }
+                }, 850);
             }
 
             catBtn.addEventListener("click", () => {
+                if (!running) {
+                    return;
+                }
                 score += 1;
-                catchCount += 1;
                 refreshScore();
-                renderGameStatus(`Kucing tertangkap ${catchCount} kali. Dia pindah tempat.`);
+                renderGameStatus(`Hit terkumpul: ${score}.`);
                 moveCat();
             });
 
-            document.getElementById("resetGameBtn").addEventListener("click", resetGame);
+            startBtn.addEventListener("click", () => {
+                stopLoops();
+                startAttempt();
+            });
 
-            window.setTimeout(() => {
-                moveCat();
-                refreshScore();
-            }, 0);
+            resetBtn.addEventListener("click", () => {
+                running = false;
+                stopLoops();
+                resetAttemptUI();
+                renderGameStatus("Attempt direset. Tekan Mulai Attempt untuk bermain lagi.");
+            });
+
+            refreshBest();
+            resetAttemptUI();
 
             document.getElementById("sendBtn").addEventListener("click", async () => {
                 const finderName = document.getElementById("finderName").value.trim() || "Penemu";
@@ -925,7 +1164,7 @@
                     return;
                 }
 
-                slot.innerHTML = status("ok", "✓ Pesan tersimpan dan notifikasi ke email, Telegram, dan WhatsApp sudah dikirim.");
+                slot.innerHTML = status("ok", "Pesan tersimpan dan notifikasi terkirim ke channel yang tersedia.");
                 document.getElementById("finderMessage").value = "";
             });
         }
