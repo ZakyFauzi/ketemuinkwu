@@ -283,28 +283,165 @@ def log_message_sent(item_id, ip_address):
     )
     conn.commit()
     conn.close()
+
+# ==========================================
+# API ENDPOINTS - ADMIN & PUBLIC
+# ==========================================
+
+@app.route('/api/admin/create-owner', methods=['POST'])
+def api_admin_create_owner():
+    """API - Create new owner profile"""
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    data = request.get_json()
+    owner_id = str(uuid.uuid4())[:12]
+    
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    try:
+        c.execute(
+            '''INSERT INTO items (
+                id, item_name, owner_name, owner_whatsapp, owner_email,
+                owner_telegram_id, owner_avatar, owner_bio,
+                notification_method, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+            (owner_id, data.get('item_name', ''), data.get('owner_name', ''),
+             data.get('owner_whatsapp', ''), data.get('owner_email', ''),
+             data.get('owner_telegram_id', ''), data.get('owner_avatar', ''),
+             data.get('owner_bio', ''), data.get('notification_method', 'email'),
+             datetime.now().isoformat())
+        )
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'owner_id': owner_id,
+            'profile_url': f"/profile/{owner_id}"
+        })
+    except Exception as e:
+        conn.close()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/owners')
+def api_admin_get_owners():
+    """API - Get list of all owners"""
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('SELECT id, item_name, owner_name, owner_email, created_at FROM items WHERE item_name != "" ORDER BY created_at DESC')
+    owners = [dict(zip([col[0] for col in c.description], row)) for row in c.fetchall()]
+    conn.close()
+    
+    return jsonify(owners)
+
+@app.route('/api/send-message', methods=['POST'])
+def api_send_message():
+    """API - Send message to owner"""
+    data = request.get_json()
+    owner_id = data.get('owner_id')
+    sender_name = data.get('sender_name', 'Penemu')
+    sender_email = data.get('sender_email', '')
+    message = data.get('message', '')
+    method = data.get('method', 'email')
+    
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM items WHERE id = ?', (owner_id,))
+    item = c.fetchone()
+    
+    if not item or item[1] == "":
+        conn.close()
+        return jsonify({'error': 'Owner not found'}), 404
+    
+    # Store message
+    try:
+        c.execute(
+            'INSERT INTO messages (item_id, sender, text, timestamp) VALUES (?, ?, ?, ?)',
+            (owner_id, sender_name, message, datetime.now().isoformat())
+        )
+        conn.commit()
+        
+        # Send notification
+        if method == 'email' and item[7]:  # owner_email
+            subject = f"Pesan tentang {item[1]}"
+            html = f"""<html><body style="font-family: Arial;">
+                <h2>Pesan dari {sender_name}</h2>
+                <p>Tentang barangmu: <b>{item[1]}</b></p>
+                <p>{message}</p>
+                {'<p>Email: ' + sender_email + '</p>' if sender_email else ''}
+                </body></html>"""
+            send_email_notification(item[7], subject, html)
+        
+        elif method == 'telegram' and item[8]:  # owner_telegram_id
+            tg_msg = f"📬 Pesan tentang {item[1]}\n\n💬 Dari: {sender_name}\n{message}"
+            send_telegram_notification(item[8], tg_msg)
+        
+        conn.close()
+        return jsonify({'success': True, 'message': 'Pesan terkirim!'})
+    except Exception as e:
+        conn.close()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/share-location', methods=['POST'])
+def api_share_location():
+    """API - Log location share"""
+    data = request.get_json()
+    owner_id = data.get('owner_id')
+    lat = data.get('lat')
+    lng = data.get('lng')
+    
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute(
+        'INSERT INTO scan_tracking (item_id, ip_address, timestamp, action) VALUES (?, ?, ?, ?)',
+        (owner_id, request.remote_addr, datetime.now().isoformat(), f'location_share:{lat},{lng}')
+    )
+    c.execute('UPDATE items SET lat = ?, lng = ?, last_scan_timestamp = ? WHERE id = ?',
+              (lat, lng, datetime.now().isoformat(), owner_id))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'success': True})
+
 ADMIN_PIN = os.getenv('ADMIN_PIN', '9999')
 
 @app.route('/admin')
-def admin():
-    if not session.get('is_admin'):
+def admin_landing():
+    """Admin landing - shows login if not logged in"""
+    if not session.get('admin_logged_in'):
         return render_template('admin_login.html')
-    notify_status = request.args.get('notify_status', '')
-    return render_template('admin.html', notify_status=notify_status)
+    return redirect(url_for('admin_dashboard'))
 
-@app.route('/admin_login', methods=['POST'])
-def admin_login():
-    pin_input = request.form.get('pin')
-    if pin_input == ADMIN_PIN:
-        session['is_admin'] = True
-        return redirect(url_for('admin'))
-    else:
-        return "PIN Admin Salah! Akses Ditolak.", 403
+@app.route('/api/admin/login', methods=['POST'])
+def api_admin_login():
+    """Admin login - verify password"""
+    data = request.get_json()
+    password = data.get('password', '')
+    
+    if password == ADMIN_PIN:
+        session['admin_logged_in'] = True
+        session['admin_login_time'] = datetime.now().isoformat()
+        return jsonify({'success': True})
+    
+    return jsonify({'success': False, 'error': 'Password salah'}), 401
 
-@app.route('/admin_logout')
-def admin_logout():
-    session.pop('is_admin', None)
-    return redirect(url_for('index'))
+@app.route('/api/admin/logout', methods=['POST'])
+def api_admin_logout():
+    """Admin logout"""
+    session.pop('admin_logged_in', None)
+    session.pop('admin_login_time', None)
+    return jsonify({'success': True})
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    """Admin dashboard - manage owners"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_landing'))
+    return render_template('admin_dashboard.html')
 
 @app.route('/generate_blank', methods=['POST'])
 def generate_blank():
@@ -385,7 +522,8 @@ def admin_test_notify(item_id):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    """Landing page - public entry"""
+    return render_template('landing.html')
 
 @app.route('/activate', methods=['POST'])
 def activate():
@@ -435,31 +573,36 @@ def login():
 
 @app.route('/found/<item_id>')
 def found(item_id):
+    """Redirect old /found route to new /profile route"""
+    return redirect(url_for('public_profile', owner_id=item_id))
+
+@app.route('/profile/<owner_id>')
+def public_profile(owner_id):
+    """Public profile page - finder sees owner info"""
     conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute('SELECT * FROM items WHERE id = ?', (item_id,))
-    item = c.fetchone()
+    c.execute('SELECT * FROM items WHERE id = ?', (owner_id,))
+    item_row = c.fetchone()
     
-    if not item:
+    if not item_row or item_row['item_name'] == "":  # item_name empty = not activated
         conn.close()
-        return "Tag NFC tidak valid/tidak terdaftar.", 404
-        
-    if item[1] == "":
-        conn.close()
-        return render_template('unclaimed.html', tag_id=item_id, platform_url=request.host_url)
+        return render_template('profile.html', error='Profil tidak ditemukan atau belum diaktivasi', owner_id=owner_id), 404
     
-    # Trigger notifikasi ke owner
-    notify_owner(item)
+    # Log scan
+    ip = request.remote_addr
+    c.execute(
+        'INSERT INTO scan_tracking (item_id, ip_address, timestamp, action) VALUES (?, ?, ?, ?)',
+        (owner_id, ip, datetime.now().isoformat(), 'profile_view')
+    )
+    conn.commit()
     
-    c.execute('SELECT sender, text, timestamp FROM messages WHERE item_id = ? ORDER BY id ASC', (item_id,))
-    chat_history = c.fetchall()
+    # Trigger notification
+    notify_owner(item_row)
+    
     conn.close()
     
-    # Cek apakah IP ini sudah bisa send message
-    ip_address = request.remote_addr
-    can_send = can_send_message(item_id, ip_address)
-    
-    return render_template('found.html', item_id=item_id, item=item, chat_history=chat_history, can_send=can_send)
+    return render_template('profile.html', item=dict(item_row), owner_id=owner_id)
 
 @app.route('/dashboard')
 def dashboard():
