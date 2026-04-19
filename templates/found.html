@@ -1,517 +1,407 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ item[1] }} - Ketemuin</title>
     <style>
-        :root {
-            --bg-0: #02040a;
-            --bg-1: #061225;
-            --bg-2: #0b1d3a;
-            --ink-0: #f3f7ff;
-            --ink-1: #b7c4da;
-            --line: #1f345c;
-            --accent: #3f74ff;
-            --accent-2: #1cc8ff;
-            --good: #39d98a;
-            --warn: #ffbe3b;
-            --danger: #ff6b6b;
-            --card: rgba(8, 17, 34, 0.78);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-            color: var(--ink-0);
-            background:
-                radial-gradient(circle at 15% 10%, #12356e 0%, transparent 35%),
-                radial-gradient(circle at 80% 20%, #0d2a5a 0%, transparent 30%),
-                linear-gradient(150deg, var(--bg-0) 0%, var(--bg-1) 48%, var(--bg-2) 100%);
             display: flex;
             justify-content: center;
-            padding: 16px;
-            overflow-x: hidden;
+            padding: 15px;
+            animation: fadeIn 0.5s ease-out;
         }
-
-        .wrap {
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .container {
             width: 100%;
-            max-width: 430px;
-            animation: riseIn 0.6s ease-out;
+            max-width: 420px;
+            padding-bottom: 20px;
         }
-
-        @keyframes riseIn {
+        
+        /* PROFILE CARD */
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(22px);
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-        .panel {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
-            overflow: hidden;
+        
+        .avatar-wrapper {
+            margin-bottom: 15px;
         }
-
-        .top {
-            position: relative;
-            padding: 22px 20px 14px;
-            border-bottom: 1px solid var(--line);
-            background:
-                linear-gradient(170deg, rgba(63, 116, 255, 0.22) 0%, rgba(6, 18, 37, 0.35) 60%),
-                rgba(8, 17, 34, 0.75);
-        }
-
-        .scan-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            color: #d9e7ff;
-            background: rgba(57, 217, 138, 0.18);
-            border: 1px solid rgba(57, 217, 138, 0.45);
-            border-radius: 999px;
-            padding: 6px 10px;
-            margin-bottom: 14px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .brand img {
-            width: 36px;
-            height: 36px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(28, 200, 255, 0.32));
-        }
-
-        .brand strong {
-            letter-spacing: 1px;
-            font-size: 14px;
-            color: #dbe7ff;
-        }
-
-        .owner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
+        
         .avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 20px;
-            border: 2px solid rgba(63, 116, 255, 0.55);
-            overflow: hidden;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
-            background: linear-gradient(145deg, #0f2954, #081528);
+            margin: 0 auto 15px;
+            font-size: 40px;
+            color: white;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            overflow: hidden;
         }
-
+        
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
-        .owner h1 {
-            font-size: 22px;
-            line-height: 1.1;
-            margin-bottom: 4px;
+        
+        .status-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
-        .owner p {
-            color: var(--ink-1);
+        
+        .owner-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .item-name {
             font-size: 13px;
+            color: #95a5a6;
+            margin-bottom: 12px;
+            font-weight: 500;
         }
-
+        
         .bio {
-            margin: 14px 20px 0;
             font-size: 13px;
-            line-height: 1.55;
-            color: #d7e6ff;
-            background: rgba(13, 42, 90, 0.34);
-            border: 1px solid rgba(63, 116, 255, 0.32);
-            border-radius: 12px;
-            padding: 10px 12px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-style: italic;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
         }
-
-        .actions {
-            padding: 16px 20px 18px;
-            display: grid;
+        
+        /* ACTION BUTTONS */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
+            margin: 20px 0;
         }
-
+        
         .btn {
-            border: 0;
-            text-decoration: none;
+            padding: 14px;
+            border: none;
             border-radius: 12px;
-            padding: 13px 14px;
-            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            color: white;
-            display: inline-flex;
-            justify-content: center;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            transition: transform 0.18s ease, box-shadow 0.22s ease;
         }
-
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
+        
         .btn:active {
-            transform: translateY(1px);
+            transform: scale(0.98);
         }
-
-        .btn-wa {
-            background: linear-gradient(135deg, #159957, #1eb46b);
-            box-shadow: 0 8px 24px rgba(30, 180, 107, 0.25);
+        
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25d366 0%, #20ba5c 100%);
+            color: white;
         }
-
-        .btn-gps {
-            background: linear-gradient(135deg, #3458d6, #1d327a);
-            box-shadow: 0 8px 24px rgba(63, 116, 255, 0.28);
+        
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
         }
-
-        .btn-gps[disabled] {
-            opacity: 0.66;
+        
+        .btn-location {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5352 100%);
+            color: white;
+        }
+        
+        .btn-location:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .btn-location:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
-
-        .status {
-            min-height: 17px;
+        
+        .status-text {
             font-size: 12px;
-            color: var(--good);
-            margin-top: 2px;
+            color: #27ae60;
+            margin-top: 5px;
+            font-weight: 600;
+            min-height: 16px;
         }
-
-        .section {
-            margin-top: 14px;
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 14px;
-            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.26);
-        }
-
-        .section h2 {
+        
+        /* CHAT SECTION */
+        .section-title {
+            color: white;
             font-size: 13px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.95px;
-            color: #ceddff;
-            margin-bottom: 10px;
+            letter-spacing: 1px;
+            margin: 20px 0 12px;
+            opacity: 0.9;
         }
-
-        .warning {
-            background: rgba(255, 190, 59, 0.12);
-            border: 1px solid rgba(255, 190, 59, 0.35);
-            border-radius: 10px;
+        
+        .alert-warning {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            border-radius: 8px;
             font-size: 12px;
+            margin-bottom: 15px;
             line-height: 1.5;
-            color: #ffe7b0;
-            padding: 10px;
-            margin-bottom: 10px;
+            backdrop-filter: blur(10px);
         }
-
-        .rate-limit {
-            background: rgba(255, 107, 107, 0.16);
-            border: 1px solid rgba(255, 107, 107, 0.45);
-            border-radius: 10px;
-            color: #ffd4d4;
-            padding: 10px;
-            font-size: 12px;
-            margin-bottom: 10px;
+        
+        .alert-warning strong {
+            display: block;
+            margin-bottom: 4px;
         }
-
+        
         .chat-box {
-            background: rgba(4, 11, 24, 0.72);
-            border: 1px solid rgba(69, 96, 152, 0.45);
-            border-radius: 12px;
-            padding: 10px;
-            height: 220px;
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            height: 250px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-
+        
         .msg {
-            max-width: 88%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            max-width: 85%;
             font-size: 13px;
             line-height: 1.4;
-            border-radius: 11px;
-            padding: 9px 11px;
-            word-break: break-word;
+            word-wrap: break-word;
         }
-
+        
         .msg.finder {
+            background: #dcf8c6;
             align-self: flex-end;
-            background: #2e5ad4;
-            color: #eef3ff;
             border-bottom-right-radius: 4px;
+            color: #2c3e50;
         }
-
+        
         .msg.owner {
+            background: #e8e8ea;
             align-self: flex-start;
-            background: #18253d;
-            color: #d8e5ff;
             border-bottom-left-radius: 4px;
-            border: 1px solid #2f446e;
+            color: #2c3e50;
         }
-
+        
         .empty-chat {
-            margin: auto;
-            font-size: 12px;
-            color: #a6b5d3;
             text-align: center;
+            color: #aaa;
+            font-size: 13px;
+            margin: auto;
+            opacity: 0.7;
         }
-
+        
         .chat-form {
-            margin-top: 10px;
             display: flex;
             gap: 8px;
-        }
-
-        .chat-form input {
-            flex: 1;
-            border: 1px solid #2a4170;
-            background: #081123;
-            color: #eef4ff;
-            border-radius: 10px;
-            padding: 11px;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .chat-form input:focus {
-            border-color: #4d82ff;
-        }
-
-        .chat-form button {
-            border: 0;
-            border-radius: 10px;
-            padding: 0 14px;
-            font-weight: 700;
-            color: white;
-            background: linear-gradient(135deg, #3f74ff, #2750bd);
-            cursor: pointer;
-        }
-
-        .game-box {
-            margin-top: 12px;
-            background: linear-gradient(150deg, rgba(15, 41, 84, 0.75), rgba(5, 14, 30, 0.84));
-            border: 1px solid rgba(63, 116, 255, 0.42);
+            background: white;
+            padding: 12px;
             border-radius: 12px;
-            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-
-        .game-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
+        
+        .chat-form input {
+            flex-grow: 1;
+            padding: 11px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        
+        .chat-form input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .chat-form button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .chat-form button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .chat-form button:active {
+            transform: scale(0.98);
+        }
+        
+        .rate-limit-msg {
+            background: #ffe5e5;
+            color: #c92a2a;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
             font-size: 12px;
-            color: #d9e6ff;
-        }
-
-        .arena {
-            position: relative;
-            height: 132px;
-            border-radius: 10px;
-            border: 1px dashed rgba(155, 188, 255, 0.55);
-            background: radial-gradient(circle at 30% 30%, rgba(17, 52, 120, 0.43), rgba(4, 12, 25, 0.72));
-            overflow: hidden;
+            font-weight: 600;
             margin-bottom: 10px;
         }
-
-        .cat {
-            position: absolute;
-            left: 40%;
-            top: 45%;
-            width: 38px;
-            height: 38px;
-            border: 0;
-            border-radius: 50%;
-            cursor: pointer;
-            background: #ffffff;
-            box-shadow: 0 4px 18px rgba(28, 200, 255, 0.45);
-            font-size: 20px;
-            line-height: 1;
-        }
-
-        .game-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #d7e4fd;
-        }
-
-        .game-controls button {
-            border: 1px solid #4570d2;
-            color: #e8f0ff;
-            background: #122649;
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        .footer {
+        
+        .footer-note {
             text-align: center;
-            margin-top: 12px;
-            color: #8ea2c8;
             font-size: 11px;
-        }
-
-        @media (max-width: 440px) {
-            .owner h1 {
-                font-size: 20px;
-            }
-
-            .avatar {
-                width: 66px;
-                height: 66px;
-            }
-
-            .chat-box {
-                height: 205px;
-            }
+            color: rgba(255,255,255,0.7);
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <div class="panel">
-            <div class="top">
-                <div class="scan-tag">Scan Terdeteksi</div>
-                <div class="brand">
-                    <img src="/Logo.svg" alt="Ketemuin Logo">
-                    <strong>KETEMUIN NFC</strong>
-                </div>
-                <div class="owner">
-                    <div class="avatar">
-                        {% if item[6] %}
-                            <img src="{{ item[6] }}" alt="Avatar Owner">
-                        {% else %}
-                            👤
-                        {% endif %}
-                    </div>
-                    <div>
-                        <h1>{{ item[3] }}</h1>
-                        <p>Pemilik dari: {{ item[1] }}</p>
-                    </div>
+    <div class="container">
+        <!-- PROFILE CARD -->
+        <div class="profile-card">
+            <div class="status-badge">🔍 Ditemukan</div>
+            
+            <div class="avatar-wrapper">
+                <div class="avatar">
+                    {% if item[6] %}
+                        <img src="{{ item[6] }}" alt="Avatar">
+                    {% else %}
+                        👤
+                    {% endif %}
                 </div>
             </div>
-
+            
+            <div class="owner-name">{{ item[3] }}</div>
+            <div class="item-name">💼 {{ item[1] }}</div>
+            
             {% if item[5] %}
                 <div class="bio">"{{ item[5] }}"</div>
             {% endif %}
-
-            <div class="actions">
-                <a href="https://api.whatsapp.com/send?phone={{ item[4] | replace(' ', '') | replace('-', '') }}&text=Halo! Aku menemukan barangmu di Ketemuin"
-                   target="_blank"
-                   class="btn btn-wa">
-                    Chat via WhatsApp
+            
+            <!-- ACTION BUTTONS -->
+            <div class="action-buttons">
+                <!-- WhatsApp Button -->
+                <a href="https://api.whatsapp.com/send?phone={{ item[4] | replace(' ', '') | replace('-', '') }}&text=Halo! Aku menemukan barangmu di Ketemuin" target="_blank" class="btn btn-whatsapp">
+                    💬 Chat via WhatsApp
                 </a>
-
-                <button class="btn btn-gps" id="gps-btn" onclick="sendLocation()">
-                    Bagikan Lokasi Saya
+                
+                <!-- Share Location Button -->
+                <button class="btn btn-location" id="gps-btn" onclick="sendLocation()">
+                    📍 Bagikan Lokasi Saya
                 </button>
-                <div class="status" id="status-msg"></div>
+                <div class="status-text" id="status-msg"></div>
             </div>
         </div>
-
-        <div class="section">
-            <h2>Pesan untuk Pemilik</h2>
-            <div class="warning">
-                Untuk keamanan, ajak pemilik bertemu di tempat umum yang ramai.
+        
+        <!-- CHAT SECTION -->
+        <div class="section-title">💬 Pesan untuk Pemilik</div>
+        
+        <div class="alert-warning">
+            <strong>⚠️ Keamanan & Privasi:</strong> Bertemu di tempat umum yang ramai. Jangan bagikan info sensitif pribadi.
+        </div>
+        
+        {% if not can_send %}
+            <div class="rate-limit-msg">
+                ⏳ Kamu sudah mengirim pesan. Kirim update lokasi atau pesan baru di scan berikutnya.
             </div>
-
-            {% if not can_send %}
-                <div class="rate-limit">
-                    Kamu sudah kirim 1 pesan di scan ini. Scan ulang untuk kirim pesan berikutnya.
-                </div>
-            {% endif %}
-
-            <div class="chat-box" id="chatbox">
-                {% for chat in chat_history %}
-                    {% if chat[0] == 'finder' %}
-                        <div class="msg finder">{{ chat[1] }}</div>
-                    {% else %}
-                        <div class="msg owner">{{ chat[1] }}</div>
-                    {% endif %}
+        {% endif %}
+        
+        <div class="chat-box" id="chatbox">
+            {% for chat in chat_history %}
+                {% if chat[0] == 'finder' %}
+                    <div class="msg finder">{{ chat[1] }}</div>
                 {% else %}
-                    <div class="empty-chat">Belum ada pesan. Kamu bisa jadi penolong pertama hari ini.</div>
-                {% endfor %}
-            </div>
-
-            {% if can_send %}
-                <form action="/send_message/{{ item_id }}" method="POST" class="chat-form">
-                    <input type="hidden" name="sender" value="finder">
-                    <input type="text" name="message" placeholder="Tulis pesan untuk pemilik..." required>
-                    <button type="submit">Kirim</button>
-                </form>
-            {% endif %}
-
-            <div class="game-box">
-                <div class="game-head">
-                    <strong>Mini Game: Tangkap Kucing 20 Detik</strong>
-                    <span id="timer">20s</span>
-                </div>
-                <div class="arena" id="arena">
-                    <button id="catBtn" class="cat" type="button" aria-label="Catch the cat">🐱</button>
-                </div>
-                <div class="game-controls">
-                    <span>Skor: <strong id="score">0</strong></span>
-                    <button id="startGameBtn" type="button">Mulai Ulang</button>
-                </div>
-            </div>
+                    <div class="msg owner">{{ chat[1] }}</div>
+                {% endif %}
+            {% else %}
+                <div class="empty-chat">Belum ada pesan. Kirim pesan pertamamu! 👋</div>
+            {% endfor %}
         </div>
-
-        <div class="footer">Powered by Ketemuin</div>
+        
+        {% if can_send %}
+            <form action="/send_message/{{ item_id }}" method="POST" class="chat-form">
+                <input type="hidden" name="sender" value="finder">
+                <input type="text" name="message" placeholder="Kirim pesan..." required>
+                <button type="submit">Kirim</button>
+            </form>
+        {% else %}
+            <div style="background: white; padding: 12px; border-radius: 12px; text-align: center; color: #95a5a6; font-size: 12px;">
+                Kamu sudah mengirim pesan di scan ini. Tunggu untuk scan berikutnya.
+            </div>
+        {% endif %}
+        
+        <div class="footer-note">
+            Powered by ⚡ Ketemuin - Lost & Found NFC Platform
+        </div>
     </div>
-
+    
     <script>
         const chatBox = document.getElementById("chatbox");
-        if (chatBox) {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        
         function sendLocation() {
             const btn = document.getElementById("gps-btn");
             const statusText = document.getElementById("status-msg");
-
+            
             btn.disabled = true;
-            statusText.innerText = "Meminta izin lokasi...";
-
+            statusText.innerText = "🔄 Meminta izin lokasi...";
+            
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
@@ -524,86 +414,25 @@
                             })
                         })
                         .then(res => res.json())
-                        .then(() => {
-                            statusText.innerText = "Lokasi berhasil dikirim ke pemilik.";
-                            btn.innerText = "Lokasi Terkirim";
+                        .then(data => {
+                            statusText.innerText = "✅ Lokasi berhasil dikirim! Pemilik sudah diberitahu.";
+                            btn.innerText = "✅ Lokasi Terkirim";
                         })
-                        .catch(() => {
-                            statusText.innerText = "Gagal mengirim lokasi. Coba lagi.";
+                        .catch(err => {
+                            statusText.innerText = "❌ Gagal mengirim lokasi.";
                             btn.disabled = false;
                         });
                     },
-                    function() {
-                        statusText.innerText = "Izin lokasi ditolak atau tidak tersedia.";
+                    function(error) {
+                        statusText.innerText = "❌ Izin lokasi ditolak. Coba lagi.";
                         btn.disabled = false;
                     }
                 );
             } else {
-                statusText.innerText = "Browser tidak mendukung geolocation.";
+                statusText.innerText = "⚠️ Browser mu tidak support geolocation.";
                 btn.disabled = false;
             }
         }
-
-        const catBtn = document.getElementById('catBtn');
-        const arena = document.getElementById('arena');
-        const scoreText = document.getElementById('score');
-        const timerText = document.getElementById('timer');
-        const startGameBtn = document.getElementById('startGameBtn');
-
-        let score = 0;
-        let timeLeft = 20;
-        let gameTimer = null;
-        let gameEnded = false;
-
-        function moveCat() {
-            const arenaRect = arena.getBoundingClientRect();
-            const maxX = Math.max(arenaRect.width - 44, 8);
-            const maxY = Math.max(arenaRect.height - 44, 8);
-
-            const x = Math.floor(Math.random() * maxX);
-            const y = Math.floor(Math.random() * maxY);
-
-            catBtn.style.left = `${x}px`;
-            catBtn.style.top = `${y}px`;
-        }
-
-        function startGame() {
-            score = 0;
-            timeLeft = 20;
-            gameEnded = false;
-            scoreText.innerText = score;
-            timerText.innerText = `${timeLeft}s`;
-            catBtn.disabled = false;
-            moveCat();
-
-            if (gameTimer) {
-                clearInterval(gameTimer);
-            }
-
-            gameTimer = setInterval(() => {
-                timeLeft -= 1;
-                timerText.innerText = `${timeLeft}s`;
-                if (timeLeft <= 0) {
-                    clearInterval(gameTimer);
-                    gameEnded = true;
-                    catBtn.disabled = true;
-                    timerText.innerText = 'Selesai';
-                }
-            }, 1000);
-        }
-
-        catBtn.addEventListener('click', () => {
-            if (gameEnded) {
-                return;
-            }
-            score += 1;
-            scoreText.innerText = score;
-            moveCat();
-        });
-
-        startGameBtn.addEventListener('click', startGame);
-
-        startGame();
     </script>
 </body>
 </html>
