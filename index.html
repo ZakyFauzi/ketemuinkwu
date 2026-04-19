@@ -976,13 +976,13 @@
             const app = document.getElementById("app");
             app.innerHTML = `
                 <section class="panel" style="max-width:760px; margin: 10px auto;">
-                    <h2>Setup Supabase Dulu</h2>
-                    <p class="lead">App ini sudah full free, tapi butuh koneksi ke Supabase agar datanya tersimpan cloud.</p>
+                    <h2>Supabase config belum tersedia</h2>
+                    <p class="lead">Aplikasi ini butuh file <b>supabase-config.js</b> saat runtime agar bisa terhubung ke Supabase.</p>
                     <div class="setup-note">
-                        Buat file supabase-config.js di root project lalu isi KETEMUIN_SUPABASE_URL dan KETEMUIN_SUPABASE_ANON_KEY.
+                        File ini boleh tidak di-commit ke GitHub, tapi harus tetap ada di root yang di-serve saat deploy.
                     </div>
                     <div class="setup-note">
-                        Setelah itu jalankan SQL schema dari file supabase-schema.sql di SQL Editor Supabase.
+                        Copy dari supabase-config.example.js lalu isi KETEMUIN_SUPABASE_URL dan KETEMUIN_SUPABASE_ANON_KEY, kemudian letakkan di server/deploy root.
                     </div>
                 </section>
             `;

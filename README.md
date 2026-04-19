@@ -69,5 +69,6 @@ Set di Site Settings > Environment Variables:
 ## Catatan
 
 - Jangan commit `supabase-config.js` dan `.env`.
+- Walau tidak di-commit, `supabase-config.js` tetap harus tersedia di root yang di-serve saat deploy. Kalau tidak ada, app akan berhenti di layar setup.
 - Anon key Supabase boleh dipakai frontend, tapi RLS wajib aktif.
 
