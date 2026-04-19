@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.*.local
+supabase-config.js
 
 # Python
 __pycache__/

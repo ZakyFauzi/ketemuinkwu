@@ -3,313 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ketemuin - Smart Lost & Found</title>
+    <title>Ketemuin - Free Cloud Edition</title>
     <style>
         :root {
-            --bg: #f5f7fb;
-            --ink: #1c2a3a;
-            --muted: #58657a;
-            --brand: #1572d3;
-            --brand-dark: #0f5bb0;
+            --bg: #f2f5f8;
+            --ink: #17324d;
+            --muted: #5e738a;
             --card: #ffffff;
-            --line: #d8dfeb;
-            --ok: #1f8f48;
-            --danger: #cc2f45;
-            --hero: linear-gradient(120deg, #0a4d8f 0%, #1572d3 55%, #3aa8f3 100%);
+            --line: #d8e2ee;
+            --brand: #0f6ecd;
+            --brand-2: #27a2e4;
+            --ok: #187e3f;
+            --danger: #b92f45;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Segoe UI, Tahoma, Verdana, sans-serif;
             color: var(--ink);
             background:
-                radial-gradient(circle at 10% 10%, #d8ecff 0%, transparent 35%),
-                radial-gradient(circle at 90% 0%, #e8f7ff 0%, transparent 30%),
+                radial-gradient(circle at 8% 10%, #dff0ff 0%, transparent 30%),
+                radial-gradient(circle at 88% 0%, #eaf7ff 0%, transparent 28%),
                 var(--bg);
             min-height: 100vh;
             line-height: 1.5;
         }
 
-        .site-header {
-            padding: 18px 20px;
+        .header {
             position: sticky;
             top: 0;
             z-index: 20;
-            backdrop-filter: blur(6px);
-            background: rgba(245, 247, 251, 0.82);
-            border-bottom: 1px solid rgba(216, 223, 235, 0.7);
+            backdrop-filter: blur(4px);
+            background: rgba(242, 245, 248, 0.86);
+            border-bottom: 1px solid rgba(216, 226, 238, 0.8);
         }
 
         .header-wrap {
-            max-width: 1120px;
+            max-width: 1080px;
             margin: 0 auto;
+            padding: 14px 16px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            gap: 10px;
         }
 
         .brand {
+            font-size: 22px;
             font-weight: 800;
+            color: #0a467f;
             letter-spacing: 0.3px;
-            font-size: 20px;
-            color: #0e3b6a;
-            cursor: pointer;
             border: none;
             background: transparent;
+            cursor: pointer;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
 
-        .shell {
-            max-width: 1120px;
-            margin: 24px auto 40px;
+        .container {
+            max-width: 1080px;
+            margin: 20px auto 34px;
             padding: 0 16px;
         }
 
         .hero {
-            background: var(--hero);
+            background: linear-gradient(120deg, #0a467f 0%, #0f6ecd 58%, #27a2e4 100%);
             border-radius: 18px;
-            padding: 48px 24px;
-            color: #fff;
+            color: #ffffff;
+            padding: 44px 22px;
+            margin-bottom: 18px;
             overflow: hidden;
             position: relative;
         }
 
-        .hero::after {
+        .hero::before {
             content: "";
             position: absolute;
             right: -40px;
-            top: -40px;
-            width: 220px;
-            height: 220px;
-            background: rgba(255, 255, 255, 0.18);
+            top: -54px;
+            width: 210px;
+            height: 210px;
+            background: rgba(255, 255, 255, 0.16);
             border-radius: 50%;
         }
 
-        .hero h1 {
-            font-size: 40px;
-            line-height: 1.1;
-            margin-bottom: 12px;
-            max-width: 640px;
-        }
+        .hero h1 { font-size: 38px; line-height: 1.1; max-width: 680px; margin-bottom: 12px; }
+        .hero p { max-width: 650px; color: #e8f4ff; margin-bottom: 18px; }
 
-        .hero p {
-            max-width: 620px;
-            color: #e8f4ff;
-            font-size: 17px;
-            margin-bottom: 20px;
-        }
-
-        .feature-grid {
-            margin-top: 26px;
+        .grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .feature {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 10px 18px rgba(25, 47, 74, 0.06);
-        }
-
-        .feature h3 {
-            font-size: 16px;
-            margin-bottom: 6px;
-            color: #0f315b;
-        }
-
-        .feature p {
-            color: var(--muted);
-            font-size: 14px;
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
         .panel {
             background: var(--card);
             border: 1px solid var(--line);
             border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 10px 18px rgba(25, 47, 74, 0.05);
+            padding: 18px;
+            box-shadow: 0 10px 16px rgba(22, 48, 74, 0.05);
         }
 
-        .panel + .panel {
-            margin-top: 16px;
-        }
+        .panel + .panel { margin-top: 14px; }
 
-        .panel h2 {
-            font-size: 24px;
-            margin-bottom: 8px;
-            color: #123f6f;
-        }
+        .panel h2 { font-size: 24px; margin-bottom: 6px; color: #0d4378; }
+        .panel h3 { font-size: 18px; margin-bottom: 8px; }
+        .lead { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
 
-        .panel p.lead {
-            color: var(--muted);
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
+        .feature h3 { color: #0d4378; margin-bottom: 4px; font-size: 17px; }
+        .feature p { color: var(--muted); font-size: 14px; }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
+            gap: 10px;
         }
 
-        .form-grid .full {
-            grid-column: 1 / -1;
-        }
+        .full { grid-column: 1 / -1; }
 
         label {
             display: block;
             font-size: 13px;
             color: var(--muted);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             font-weight: 600;
         }
 
-        input,
-        textarea,
-        select {
+        input, textarea, select {
             width: 100%;
             border: 1px solid var(--line);
             border-radius: 10px;
-            padding: 11px 12px;
+            padding: 10px 11px;
             font-size: 14px;
             font-family: inherit;
-            color: var(--ink);
             background: #fff;
+            color: var(--ink);
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(21, 114, 211, 0.14);
+            box-shadow: 0 0 0 3px rgba(15, 110, 205, 0.15);
         }
 
-        textarea {
-            min-height: 94px;
-            resize: vertical;
-        }
+        textarea { min-height: 95px; resize: vertical; }
 
         .btn {
             border: none;
             border-radius: 10px;
-            padding: 11px 14px;
+            padding: 10px 13px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.18s ease;
+            transition: .18s;
         }
 
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
-        .btn-primary {
-            background: var(--brand);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: var(--brand-dark);
-        }
-
-        .btn-soft {
-            background: #e9f3ff;
-            color: #0f447d;
-        }
-
-        .btn-danger {
-            background: #ffe8ec;
-            color: #8a2434;
-        }
-
-        .button-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: var(--brand); color: #fff; }
+        .btn-primary:hover { background: #0c5fb0; }
+        .btn-soft { background: #e8f2ff; color: #0d4a85; }
+        .btn-danger { background: #ffe8ec; color: #8d2435; }
 
         .status {
             margin-top: 10px;
-            padding: 10px 12px;
-            border-radius: 10px;
+            border-radius: 9px;
+            padding: 9px 11px;
             font-size: 13px;
         }
 
-        .status.ok {
-            background: #e8f7ee;
-            border: 1px solid #bfe8ce;
-            color: var(--ok);
-        }
+        .ok { background: #eaf8f0; border: 1px solid #bfe9cf; color: var(--ok); }
+        .err { background: #ffedf0; border: 1px solid #ffd1d8; color: var(--danger); }
 
-        .status.err {
-            background: #ffecee;
-            border: 1px solid #ffd0d7;
-            color: var(--danger);
-        }
+        .owner-list { display: grid; gap: 10px; }
 
-        .owner-list {
-            display: grid;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .owner-card {
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 12px;
+        .owner-item {
             background: #fafcff;
+            border: 1px solid #d5e1ef;
+            border-radius: 10px;
+            padding: 11px;
         }
 
-        .owner-card strong {
-            display: block;
-            margin-bottom: 4px;
-            color: #0e3e70;
-        }
+        .owner-item strong { color: #0d447a; display: block; margin-bottom: 4px; }
+        .meta { color: var(--muted); font-size: 13px; }
 
-        .owner-link {
-            margin-top: 8px;
-            background: #fff;
-            border: 1px dashed #b8c4d8;
-            padding: 8px;
-            font-size: 12px;
-            color: #274e7e;
-            word-break: break-all;
+        .link {
+            margin-top: 7px;
+            background: #ffffff;
+            border: 1px dashed #b9cade;
             border-radius: 8px;
+            font-size: 12px;
+            padding: 8px;
+            word-break: break-all;
+            color: #274d7b;
         }
 
-        .profile {
-            display: grid;
-            gap: 14px;
-        }
-
-        .profile-head {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-        }
+        .profile-head { display: flex; align-items: center; gap: 12px; }
 
         .avatar {
-            width: 84px;
-            height: 84px;
+            width: 78px;
+            height: 78px;
             border-radius: 50%;
-            border: 2px solid #dce8f8;
-            background: #e8f3ff;
-            color: #0f4a87;
+            border: 2px solid #d8e7fa;
+            background: #eaf3ff;
+            color: #0d4a85;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -319,135 +217,61 @@
             flex-shrink: 0;
         }
 
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .meta {
-            color: var(--muted);
-            font-size: 14px;
-        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid #cdd9ea;
-            background: #f2f7ff;
-            color: #254b78;
-            border-radius: 999px;
-            padding: 6px 10px;
+            display: inline-block;
             font-size: 12px;
+            border-radius: 999px;
+            border: 1px solid #cbdaee;
+            background: #f2f7ff;
+            color: #214a79;
+            padding: 6px 10px;
             margin-right: 6px;
             margin-bottom: 6px;
         }
 
-        .hidden {
-            display: none !important;
+        .divider { border: none; border-top: 1px solid var(--line); margin: 12px 0; }
+        .empty { color: var(--muted); font-size: 14px; }
+
+        .setup-note {
+            background: #fff3e6;
+            border: 1px solid #ffd5a8;
+            color: #8f5208;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 12px;
         }
 
-        .empty {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .divider {
-            border: none;
-            border-top: 1px solid var(--line);
-            margin: 14px 0;
-        }
-
-        @media (max-width: 860px) {
-            .hero h1 {
-                font-size: 30px;
-            }
-
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-head {
-                align-items: flex-start;
-            }
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 30px; }
+            .grid { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
 </head>
 <body>
-    <header class="site-header">
+    <header class="header">
         <div class="header-wrap">
             <button class="brand" id="brandHome">Ketemuin</button>
-            <div class="header-actions">
+            <div class="row">
                 <button class="btn btn-soft" id="goHome">Home</button>
                 <button class="btn btn-primary" id="goAdmin">Admin</button>
             </div>
         </div>
     </header>
 
-    <main class="shell" id="app"></main>
+    <main class="container" id="app"></main>
 
     <script>
-        const STORAGE_KEYS = {
-            owners: "ketemuin_owners",
-            messages: "ketemuin_messages",
-            locations: "ketemuin_locations",
-            adminPwd: "ketemuin_admin_password",
-            adminLogin: "ketemuin_admin_login"
-        };
+        let sb = null;
+        let currentUser = null;
 
-        const defaultAdminPassword = "9999";
-
-        function getOwners() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEYS.owners) || "{}");
-        }
-
-        function setOwners(data) {
-            localStorage.setItem(STORAGE_KEYS.owners, JSON.stringify(data));
-        }
-
-        function getMessages() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEYS.messages) || "{}");
-        }
-
-        function setMessages(data) {
-            localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(data));
-        }
-
-        function getLocations() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEYS.locations) || "{}");
-        }
-
-        function setLocations(data) {
-            localStorage.setItem(STORAGE_KEYS.locations, JSON.stringify(data));
-        }
-
-        function getAdminPassword() {
-            return localStorage.getItem(STORAGE_KEYS.adminPwd) || defaultAdminPassword;
-        }
-
-        function setAdminPassword(password) {
-            localStorage.setItem(STORAGE_KEYS.adminPwd, password);
-        }
-
-        function isAdminLoggedIn() {
-            return localStorage.getItem(STORAGE_KEYS.adminLogin) === "1";
-        }
-
-        function setAdminLoggedIn(status) {
-            localStorage.setItem(STORAGE_KEYS.adminLogin, status ? "1" : "0");
-        }
-
-        function uid() {
-            return Math.random().toString(36).slice(2, 12);
-        }
-
-        function escapeHtml(text) {
-            return String(text || "")
+        function esc(v) {
+            return String(v || "")
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
@@ -455,14 +279,14 @@
                 .replace(/'/g, "&#039;");
         }
 
-        function profileUrlById(ownerId) {
-            return `${window.location.origin}/profile/${ownerId}`;
+        function status(type, text) {
+            return `<div class="status ${type}">${esc(text)}</div>`;
         }
 
         function getCurrentPath() {
             if (window.location.protocol === "file:") {
-                const hashPath = (window.location.hash || "").replace(/^#/, "").trim();
-                return hashPath || "/";
+                const h = (window.location.hash || "").replace(/^#/, "").trim();
+                return h || "/";
             }
             return window.location.pathname.replace(/\/+$/, "") || "/";
         }
@@ -477,290 +301,339 @@
             renderRoute();
         }
 
-        function toast(type, text) {
-            return `<div class="status ${type}">${escapeHtml(text)}</div>`;
+        function makeShortId() {
+            return Math.random().toString(36).slice(2, 12);
+        }
+
+        function profileUrl(shortId) {
+            return `${window.location.origin}/profile/${shortId}`;
+        }
+
+        function ensureSupabaseConfigured() {
+            const url = window.KETEMUIN_SUPABASE_URL;
+            const key = window.KETEMUIN_SUPABASE_ANON_KEY;
+            return Boolean(url && key && window.supabase && window.supabase.createClient);
+        }
+
+        function setupMissingView() {
+            const app = document.getElementById("app");
+            app.innerHTML = `
+                <section class="panel" style="max-width:760px; margin: 10px auto;">
+                    <h2>Setup Supabase Dulu</h2>
+                    <p class="lead">App ini sudah full free, tapi butuh koneksi ke Supabase agar datanya tersimpan cloud.</p>
+                    <div class="setup-note">
+                        Buat file supabase-config.js di root project lalu isi KETEMUIN_SUPABASE_URL dan KETEMUIN_SUPABASE_ANON_KEY.
+                    </div>
+                    <div class="setup-note">
+                        Setelah itu jalankan SQL schema dari file supabase-schema.sql di SQL Editor Supabase.
+                    </div>
+                </section>
+            `;
+        }
+
+        async function initSupabase() {
+            if (!ensureSupabaseConfigured()) {
+                setupMissingView();
+                return false;
+            }
+
+            sb = window.supabase.createClient(
+                window.KETEMUIN_SUPABASE_URL,
+                window.KETEMUIN_SUPABASE_ANON_KEY
+            );
+
+            const sessionRes = await sb.auth.getSession();
+            currentUser = sessionRes.data.session ? sessionRes.data.session.user : null;
+            return true;
         }
 
         function landingView() {
             const app = document.getElementById("app");
             app.innerHTML = `
                 <section class="hero">
-                    <h1>Lost & Found modern, rapi, dan mobile-first.</h1>
+                    <h1>Bukan prototype lagi. Sekarang cloud storage gratis.</h1>
                     <p>
-                        Ketemuin versi serverless: tanpa backend, gratis deploy di Vercel/Netlify,
-                        dan tetap punya flow Admin + Profil Publik.
+                        Ketemuin Free Cloud Edition pakai Supabase. Frontend tetap static,
+                        tapi data owner, pesan, dan lokasi tersimpan online lintas device.
                     </p>
-                    <div class="button-row">
+                    <div class="row">
                         <button class="btn btn-primary" id="heroAdmin">Masuk Admin</button>
-                        <button class="btn btn-soft" id="heroDemo">Lihat Profil Demo</button>
                     </div>
                 </section>
 
-                <section class="feature-grid">
-                    <article class="feature">
-                        <h3>Admin Tersembunyi</h3>
-                        <p>Publik hanya lihat landing page dan profil. Halaman admin tetap ada password.</p>
+                <section class="grid">
+                    <article class="panel feature">
+                        <h3>Tanpa Flask</h3>
+                        <p>Deploy langsung ke Netlify atau Vercel tanpa server Python.</p>
                     </article>
-                    <article class="feature">
-                        <h3>Profil Publik Bersih</h3>
-                        <p>Link profil hanya menampilkan info owner, tombol lokasi, dan kirim pesan.</p>
+                    <article class="panel feature">
+                        <h3>Data Cloud Gratis</h3>
+                        <p>Supabase free tier cukup untuk MVP dan demo production-like.</p>
                     </article>
-                    <article class="feature">
-                        <h3>100% Static & Gratis</h3>
-                        <p>Semua data disimpan di localStorage untuk demo/POC, tanpa server Python.</p>
+                    <article class="panel feature">
+                        <h3>Admin Tetap Ada</h3>
+                        <p>Admin login pakai Supabase Auth, public hanya lihat profil.</p>
                     </article>
                 </section>
             `;
-
             document.getElementById("heroAdmin").addEventListener("click", () => navigate("/admin"));
-            document.getElementById("heroDemo").addEventListener("click", () => {
-                const owners = getOwners();
-                const firstId = Object.keys(owners)[0];
-                if (!firstId) {
-                    alert("Belum ada owner. Buat dulu lewat Admin.");
-                    return;
-                }
-                navigate(`/profile/${firstId}`);
-            });
         }
 
         function adminLoginView() {
             const app = document.getElementById("app");
             app.innerHTML = `
-                <section class="panel" style="max-width: 520px; margin: 10px auto;">
+                <section class="panel" style="max-width: 560px; margin: 10px auto;">
                     <h2>Admin Login</h2>
-                    <p class="lead">Masuk ke dashboard untuk membuat owner profile dan link publik.</p>
+                    <p class="lead">Gunakan email dan password dari Supabase Auth.</p>
                     <div class="form-grid">
                         <div class="full">
-                            <label>Password Admin</label>
-                            <input id="adminPwdInput" type="password" placeholder="Masukkan password admin">
+                            <label>Email Admin</label>
+                            <input id="adminEmail" type="email" placeholder="admin@ketemuin.com">
                         </div>
-                        <div class="full button-row">
-                            <button class="btn btn-primary" id="adminLoginBtn">Masuk</button>
-                            <button class="btn btn-soft" id="adminBackBtn">Kembali</button>
+                        <div class="full">
+                            <label>Password Admin</label>
+                            <input id="adminPass" type="password" placeholder="Password">
+                        </div>
+                        <div class="full row">
+                            <button class="btn btn-primary" id="loginBtn">Masuk</button>
+                            <button class="btn btn-soft" id="backBtn">Kembali</button>
                         </div>
                     </div>
-                    <div id="adminLoginStatus"></div>
+                    <div id="loginStatus"></div>
                 </section>
             `;
 
-            document.getElementById("adminBackBtn").addEventListener("click", () => navigate("/"));
-            document.getElementById("adminLoginBtn").addEventListener("click", () => {
-                const val = document.getElementById("adminPwdInput").value.trim();
-                const status = document.getElementById("adminLoginStatus");
-                if (val !== getAdminPassword()) {
-                    status.innerHTML = toast("err", "Password salah.");
+            document.getElementById("backBtn").addEventListener("click", () => navigate("/"));
+            document.getElementById("loginBtn").addEventListener("click", async () => {
+                const email = document.getElementById("adminEmail").value.trim();
+                const pass = document.getElementById("adminPass").value.trim();
+                const slot = document.getElementById("loginStatus");
+
+                if (!email || !pass) {
+                    slot.innerHTML = status("err", "Email dan password wajib diisi.");
                     return;
                 }
-                setAdminLoggedIn(true);
+
+                const res = await sb.auth.signInWithPassword({ email, password: pass });
+                if (res.error) {
+                    slot.innerHTML = status("err", res.error.message);
+                    return;
+                }
+
+                currentUser = res.data.user;
                 navigate("/admin");
             });
         }
 
-        function ownerCard(ownerId, owner) {
+        function ownerItem(owner) {
+            const publicLink = profileUrl(owner.short_id);
             return `
-                <div class="owner-card">
-                    <strong>${escapeHtml(owner.itemName)}</strong>
-                    <div class="meta">Owner: ${escapeHtml(owner.name)}</div>
-                    <div class="meta">WA: ${escapeHtml(owner.whatsapp)}</div>
-                    <div class="owner-link">${escapeHtml(profileUrlById(ownerId))}</div>
-                    <div class="button-row" style="margin-top:8px;">
-                        <button class="btn btn-soft" data-copy="${escapeHtml(profileUrlById(ownerId))}">Copy Link</button>
-                        <button class="btn btn-soft" data-open="${escapeHtml(ownerId)}">Buka Profil</button>
+                <div class="owner-item">
+                    <strong>${esc(owner.item_name)}</strong>
+                    <div class="meta">Owner: ${esc(owner.owner_name)}</div>
+                    <div class="meta">WA: ${esc(owner.owner_whatsapp)}</div>
+                    <div class="link">${esc(publicLink)}</div>
+                    <div class="row" style="margin-top:8px;">
+                        <button class="btn btn-soft" data-copy="${esc(publicLink)}">Copy Link</button>
+                        <button class="btn btn-soft" data-open="${esc(owner.short_id)}">Buka Profil</button>
                     </div>
                 </div>
             `;
         }
 
-        function adminDashboardView() {
-            const owners = getOwners();
+        async function adminDashboardView() {
             const app = document.getElementById("app");
-            const ownerEntries = Object.entries(owners);
-
             app.innerHTML = `
                 <section class="panel">
                     <h2>Admin Dashboard</h2>
-                    <p class="lead">Buat profil owner, generate link publik, dan kelola data demo.</p>
-                    <div class="button-row" style="margin-bottom: 12px;">
-                        <button class="btn btn-danger" id="logoutAdmin">Logout</button>
+                    <p class="lead">Buat owner profile dan generate link publik.</p>
+                    <div class="row" style="margin-bottom:12px;">
+                        <button class="btn btn-danger" id="logoutBtn">Logout</button>
                     </div>
+
                     <div class="form-grid">
                         <div>
-                            <label>Nama Pemilik</label>
-                            <input id="oName" placeholder="Budi Santoso">
+                            <label>Nama Owner</label>
+                            <input id="fName" placeholder="Budi Santoso">
                         </div>
                         <div>
                             <label>Nama Barang</label>
-                            <input id="oItem" placeholder="Tas Laptop Hitam">
+                            <input id="fItem" placeholder="Tas Laptop Hitam">
                         </div>
                         <div>
                             <label>WhatsApp</label>
-                            <input id="oWa" placeholder="628123456789">
+                            <input id="fWa" placeholder="628123456789">
                         </div>
                         <div>
                             <label>Email</label>
-                            <input id="oEmail" type="email" placeholder="budi@email.com">
+                            <input id="fEmail" type="email" placeholder="budi@email.com">
                         </div>
                         <div>
-                            <label>Telegram Username (tanpa @)</label>
-                            <input id="oTg" placeholder="budiowner">
+                            <label>Telegram Username</label>
+                            <input id="fTg" placeholder="budiowner">
                         </div>
                         <div>
                             <label>Avatar URL</label>
-                            <input id="oAvatar" placeholder="https://...">
+                            <input id="fAvatar" placeholder="https://...">
                         </div>
                         <div class="full">
                             <label>Bio</label>
-                            <textarea id="oBio" placeholder="Titip pesan untuk penemu barangmu"></textarea>
+                            <textarea id="fBio" placeholder="Pesan untuk penemu"></textarea>
                         </div>
-                        <div class="full button-row">
-                            <button class="btn btn-primary" id="createOwnerBtn">Simpan Owner</button>
-                        </div>
-                    </div>
-                    <div id="createOwnerStatus"></div>
-                    <hr class="divider">
-                    <div class="form-grid">
-                        <div>
-                            <label>Ganti Password Admin</label>
-                            <input id="newAdminPwd" type="password" placeholder="Password baru">
-                        </div>
-                        <div class="button-row" style="align-items:end;">
-                            <button class="btn btn-soft" id="saveAdminPwd">Update Password</button>
+                        <div class="full row">
+                            <button class="btn btn-primary" id="saveOwnerBtn">Simpan Owner</button>
                         </div>
                     </div>
-                    <div id="adminPwdStatus"></div>
+                    <div id="ownerCreateStatus"></div>
                 </section>
 
                 <section class="panel">
-                    <h2>Daftar Owner (${ownerEntries.length})</h2>
-                    <p class="lead">Semua profil publik yang sudah dibuat dari browser ini.</p>
-                    <div class="owner-list" id="ownerListWrap">
-                        ${ownerEntries.length ? ownerEntries.map(([id, owner]) => ownerCard(id, owner)).join("") : `<div class="empty">Belum ada owner.</div>`}
-                    </div>
+                    <h3>Daftar Owner Saya</h3>
+                    <p class="lead">Semua owner yang kamu buat dari akun admin ini.</p>
+                    <div id="ownerList" class="owner-list"></div>
                 </section>
             `;
 
-            document.getElementById("logoutAdmin").addEventListener("click", () => {
-                setAdminLoggedIn(false);
+            document.getElementById("logoutBtn").addEventListener("click", async () => {
+                await sb.auth.signOut();
+                currentUser = null;
                 navigate("/");
             });
 
-            document.getElementById("createOwnerBtn").addEventListener("click", () => {
-                const owner = {
-                    name: document.getElementById("oName").value.trim(),
-                    itemName: document.getElementById("oItem").value.trim(),
-                    whatsapp: document.getElementById("oWa").value.trim(),
-                    email: document.getElementById("oEmail").value.trim(),
-                    telegram: document.getElementById("oTg").value.trim(),
-                    avatar: document.getElementById("oAvatar").value.trim(),
-                    bio: document.getElementById("oBio").value.trim(),
-                    createdAt: new Date().toISOString()
+            document.getElementById("saveOwnerBtn").addEventListener("click", async () => {
+                const payload = {
+                    short_id: makeShortId(),
+                    owner_name: document.getElementById("fName").value.trim(),
+                    item_name: document.getElementById("fItem").value.trim(),
+                    owner_whatsapp: document.getElementById("fWa").value.trim(),
+                    owner_email: document.getElementById("fEmail").value.trim(),
+                    owner_telegram: document.getElementById("fTg").value.trim(),
+                    owner_avatar: document.getElementById("fAvatar").value.trim(),
+                    owner_bio: document.getElementById("fBio").value.trim(),
+                    created_by: currentUser.id
                 };
-                const status = document.getElementById("createOwnerStatus");
 
-                if (!owner.name || !owner.itemName || !owner.whatsapp) {
-                    status.innerHTML = toast("err", "Nama, barang, dan WhatsApp wajib diisi.");
+                const slot = document.getElementById("ownerCreateStatus");
+
+                if (!payload.owner_name || !payload.item_name || !payload.owner_whatsapp) {
+                    slot.innerHTML = status("err", "Nama owner, nama barang, dan WhatsApp wajib diisi.");
                     return;
                 }
 
-                const id = uid();
-                const db = getOwners();
-                db[id] = owner;
-                setOwners(db);
-                status.innerHTML = toast("ok", `Owner berhasil disimpan. Link: ${profileUrlById(id)}`);
-                renderRoute();
-            });
-
-            document.getElementById("saveAdminPwd").addEventListener("click", () => {
-                const val = document.getElementById("newAdminPwd").value.trim();
-                const status = document.getElementById("adminPwdStatus");
-                if (val.length < 4) {
-                    status.innerHTML = toast("err", "Password minimal 4 karakter.");
+                const inserted = await sb.from("owners").insert(payload).select().single();
+                if (inserted.error) {
+                    slot.innerHTML = status("err", inserted.error.message);
                     return;
                 }
-                setAdminPassword(val);
-                status.innerHTML = toast("ok", "Password admin berhasil diupdate.");
-                document.getElementById("newAdminPwd").value = "";
+
+                slot.innerHTML = status("ok", `Owner berhasil dibuat. Link: ${profileUrl(inserted.data.short_id)}`);
+                await loadMyOwners();
             });
 
-            document.querySelectorAll("[data-copy]").forEach((btn) => {
-                btn.addEventListener("click", async () => {
-                    await navigator.clipboard.writeText(btn.getAttribute("data-copy"));
-                    btn.textContent = "Copied";
-                    setTimeout(() => { btn.textContent = "Copy Link"; }, 1000);
-                });
-            });
+            async function loadMyOwners() {
+                const list = document.getElementById("ownerList");
+                const q = await sb
+                    .from("owners")
+                    .select("id, short_id, owner_name, item_name, owner_whatsapp")
+                    .eq("created_by", currentUser.id)
+                    .order("created_at", { ascending: false });
 
-            document.querySelectorAll("[data-open]").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    navigate(`/profile/${btn.getAttribute("data-open")}`);
+                if (q.error) {
+                    list.innerHTML = status("err", q.error.message);
+                    return;
+                }
+
+                if (!q.data.length) {
+                    list.innerHTML = `<div class="empty">Belum ada owner.</div>`;
+                    return;
+                }
+
+                list.innerHTML = q.data.map(ownerItem).join("");
+
+                list.querySelectorAll("[data-copy]").forEach((btn) => {
+                    btn.addEventListener("click", async () => {
+                        await navigator.clipboard.writeText(btn.getAttribute("data-copy"));
+                        btn.textContent = "Copied";
+                        setTimeout(() => { btn.textContent = "Copy Link"; }, 1200);
+                    });
                 });
-            });
+                list.querySelectorAll("[data-open]").forEach((btn) => {
+                    btn.addEventListener("click", () => navigate(`/profile/${btn.getAttribute("data-open")}`));
+                });
+            }
+
+            await loadMyOwners();
         }
 
-        function sendMessageLink(owner, method, text) {
-            const encoded = encodeURIComponent(text);
-
+        function buildChannelLink(owner, method, messageText) {
+            const msg = encodeURIComponent(messageText);
             if (method === "wa") {
-                return `https://api.whatsapp.com/send?phone=${encodeURIComponent(owner.whatsapp || "")}&text=${encoded}`;
+                return `https://api.whatsapp.com/send?phone=${encodeURIComponent(owner.owner_whatsapp || "")}&text=${msg}`;
             }
             if (method === "email") {
-                return `mailto:${encodeURIComponent(owner.email || "")}?subject=${encodeURIComponent("Info Barang Ketemuin")}&body=${encoded}`;
+                return `mailto:${encodeURIComponent(owner.owner_email || "")}?subject=${encodeURIComponent("Info Barang Ketemuin")}&body=${msg}`;
             }
             if (method === "telegram") {
-                if (!owner.telegram) {
+                if (!owner.owner_telegram) {
                     return "";
                 }
-                return `https://t.me/${encodeURIComponent(owner.telegram)}?text=${encoded}`;
+                return `https://t.me/${encodeURIComponent(owner.owner_telegram)}?text=${msg}`;
             }
             return "";
         }
 
-        function publicProfileView(ownerId) {
-            const owners = getOwners();
-            const owner = owners[ownerId];
+        async function publicProfileView(shortId) {
             const app = document.getElementById("app");
+            const q = await sb.from("owners").select("*").eq("short_id", shortId).single();
 
-            if (!owner) {
-                notFoundView("Profil owner tidak ditemukan.");
+            if (q.error || !q.data) {
+                app.innerHTML = `
+                    <section class="panel" style="max-width:700px; margin: 10px auto;">
+                        <h2>Profil Tidak Ditemukan</h2>
+                        <p class="lead">Owner ID tidak valid atau data sudah dihapus.</p>
+                        <div class="row"><button class="btn btn-primary" id="nfBack">Kembali</button></div>
+                    </section>
+                `;
+                document.getElementById("nfBack").addEventListener("click", () => navigate("/"));
                 return;
             }
 
-            const displayAvatar = owner.avatar
-                ? `<img src="${escapeHtml(owner.avatar)}" alt="Avatar">`
-                : escapeHtml((owner.name || "O").slice(0, 1).toUpperCase());
+            const owner = q.data;
+            const avatar = owner.owner_avatar
+                ? `<img src="${esc(owner.owner_avatar)}" alt="Avatar">`
+                : esc((owner.owner_name || "O").slice(0, 1).toUpperCase());
 
             app.innerHTML = `
-                <section class="panel profile">
+                <section class="panel">
                     <div class="profile-head">
-                        <div class="avatar">${displayAvatar}</div>
+                        <div class="avatar">${avatar}</div>
                         <div>
-                            <h2>${escapeHtml(owner.name)}</h2>
-                            <div class="meta">Barang: ${escapeHtml(owner.itemName)}</div>
-                            ${owner.bio ? `<div class="meta" style="margin-top:6px;">"${escapeHtml(owner.bio)}"</div>` : ""}
+                            <h2>${esc(owner.owner_name)}</h2>
+                            <div class="meta">Barang: ${esc(owner.item_name)}</div>
+                            ${owner.owner_bio ? `<div class="meta" style="margin-top:5px;">${esc(owner.owner_bio)}</div>` : ""}
                         </div>
                     </div>
 
-                    <div>
-                        <span class="pill">WA: ${escapeHtml(owner.whatsapp)}</span>
-                        ${owner.email ? `<span class="pill">Email: ${escapeHtml(owner.email)}</span>` : ""}
-                        ${owner.telegram ? `<span class="pill">Telegram: @${escapeHtml(owner.telegram)}</span>` : ""}
+                    <div style="margin-top:10px;">
+                        <span class="pill">WA: ${esc(owner.owner_whatsapp)}</span>
+                        ${owner.owner_email ? `<span class="pill">Email: ${esc(owner.owner_email)}</span>` : ""}
+                        ${owner.owner_telegram ? `<span class="pill">Telegram: @${esc(owner.owner_telegram)}</span>` : ""}
                     </div>
 
-                    <div class="button-row">
-                        <a class="btn btn-primary" href="${sendMessageLink(owner, "wa", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Chat WhatsApp</a>
-                        ${owner.email ? `<a class="btn btn-soft" href="${sendMessageLink(owner, "email", "Halo, saya menemukan barangmu.")}">Kirim Email</a>` : ""}
-                        ${owner.telegram ? `<a class="btn btn-soft" href="${sendMessageLink(owner, "telegram", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Kirim Telegram</a>` : ""}
+                    <div class="row" style="margin-top:10px;">
+                        <a class="btn btn-primary" href="${buildChannelLink(owner, "wa", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                        ${owner.owner_email ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "email", "Halo, saya menemukan barangmu.")}">Email</a>` : ""}
+                        ${owner.owner_telegram ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "telegram", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Telegram</a>` : ""}
                     </div>
 
                     <hr class="divider">
 
-                    <h3>Bagikan Lokasi Penemuan</h3>
-                    <p class="lead">Klik tombol di bawah untuk kirim koordinatmu ke pemilik.</p>
-                    <div class="button-row">
+                    <h3>Bagikan Lokasi</h3>
+                    <p class="lead">Klik untuk mengirim titik lokasi penemuan.</p>
+                    <div class="row">
                         <button class="btn btn-primary" id="shareLocBtn">Bagikan Lokasi</button>
                     </div>
-                    <div id="locationStatus"></div>
+                    <div id="locStatus"></div>
 
                     <hr class="divider">
 
@@ -771,102 +644,108 @@
                             <input id="finderName" placeholder="Nama kamu">
                         </div>
                         <div>
-                            <label>Metode</label>
+                            <label>Channel</label>
                             <select id="finderMethod">
                                 <option value="wa">WhatsApp</option>
-                                <option value="email" ${owner.email ? "" : "disabled"}>Email</option>
-                                <option value="telegram" ${owner.telegram ? "" : "disabled"}>Telegram</option>
+                                <option value="email" ${owner.owner_email ? "" : "disabled"}>Email</option>
+                                <option value="telegram" ${owner.owner_telegram ? "" : "disabled"}>Telegram</option>
                             </select>
                         </div>
                         <div class="full">
                             <label>Pesan</label>
-                            <textarea id="finderMessage" placeholder="Halo, saya menemukan barangmu di ..."></textarea>
+                            <textarea id="finderMessage" placeholder="Halo, saya menemukan barangmu di..."></textarea>
                         </div>
-                        <div class="full button-row">
-                            <button class="btn btn-primary" id="sendMessageBtn">Kirim Pesan Sekarang</button>
+                        <div class="full row">
+                            <button class="btn btn-primary" id="sendBtn">Kirim</button>
                         </div>
                     </div>
-                    <div id="messageStatus"></div>
+                    <div id="msgStatus"></div>
                 </section>
             `;
 
             document.getElementById("shareLocBtn").addEventListener("click", () => {
-                const status = document.getElementById("locationStatus");
+                const slot = document.getElementById("locStatus");
                 if (!navigator.geolocation) {
-                    status.innerHTML = toast("err", "Browser tidak mendukung geolocation.");
+                    slot.innerHTML = status("err", "Browser tidak mendukung geolocation.");
                     return;
                 }
-                status.innerHTML = toast("ok", "Mengambil lokasi...");
-                navigator.geolocation.getCurrentPosition((pos) => {
+
+                slot.innerHTML = status("ok", "Mengambil lokasi...");
+                navigator.geolocation.getCurrentPosition(async (pos) => {
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
                     const maps = `https://maps.google.com/?q=${lat},${lng}`;
 
-                    const logs = getLocations();
-                    logs[ownerId] = logs[ownerId] || [];
-                    logs[ownerId].push({
+                    const ins = await sb.from("location_logs").insert({
+                        owner_id: owner.id,
                         lat,
                         lng,
-                        maps,
-                        at: new Date().toISOString()
+                        maps_url: maps
                     });
-                    setLocations(logs);
 
-                    status.innerHTML = `<div class="status ok">Lokasi siap dikirim. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Google Maps</a></div>`;
+                    if (ins.error) {
+                        slot.innerHTML = status("err", ins.error.message);
+                        return;
+                    }
+
+                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div>`;
                 }, () => {
-                    status.innerHTML = toast("err", "Izin lokasi ditolak atau gagal dibaca.");
+                    slot.innerHTML = status("err", "Izin lokasi ditolak atau gagal dibaca.");
                 });
             });
 
-            document.getElementById("sendMessageBtn").addEventListener("click", () => {
-                const name = document.getElementById("finderName").value.trim() || "Penemu";
-                const method = document.getElementById("finderMethod").value;
+            document.getElementById("sendBtn").addEventListener("click", async () => {
+                const finderName = document.getElementById("finderName").value.trim() || "Penemu";
+                const finderMethod = document.getElementById("finderMethod").value;
                 const msg = document.getElementById("finderMessage").value.trim();
-                const status = document.getElementById("messageStatus");
+                const slot = document.getElementById("msgStatus");
 
                 if (!msg) {
-                    status.innerHTML = toast("err", "Pesan tidak boleh kosong.");
+                    slot.innerHTML = status("err", "Pesan tidak boleh kosong.");
                     return;
                 }
 
-                const fullText = `[Ketemuin] ${name}: ${msg}`;
-                const link = sendMessageLink(owner, method, fullText);
-                if (!link) {
-                    status.innerHTML = toast("err", "Metode ini belum tersedia untuk owner ini.");
-                    return;
-                }
-
-                const history = getMessages();
-                history[ownerId] = history[ownerId] || [];
-                history[ownerId].push({
-                    sender: name,
-                    method,
-                    message: msg,
-                    at: new Date().toISOString()
+                const save = await sb.from("messages").insert({
+                    owner_id: owner.id,
+                    finder_name: finderName,
+                    finder_method: finderMethod,
+                    message_text: msg
                 });
-                setMessages(history);
 
-                window.open(link, "_blank", "noopener,noreferrer");
-                status.innerHTML = toast("ok", "Pesan diproses. Aplikasi chat/email kamu sudah dibuka.");
+                if (save.error) {
+                    slot.innerHTML = status("err", save.error.message);
+                    return;
+                }
+
+                const full = `[Ketemuin] ${finderName}: ${msg}`;
+                const channelLink = buildChannelLink(owner, finderMethod, full);
+                if (channelLink) {
+                    window.open(channelLink, "_blank", "noopener,noreferrer");
+                }
+
+                slot.innerHTML = status("ok", "Pesan tersimpan dan channel komunikasi dibuka.");
                 document.getElementById("finderMessage").value = "";
             });
         }
 
-        function notFoundView(message) {
+        function notFoundView(text) {
             const app = document.getElementById("app");
             app.innerHTML = `
-                <section class="panel" style="max-width: 700px; margin: 10px auto;">
-                    <h2>Halaman Tidak Ditemukan</h2>
-                    <p class="lead">${escapeHtml(message || "Path tidak dikenal.")}</p>
-                    <div class="button-row">
-                        <button class="btn btn-primary" id="backHomeNF">Kembali ke Home</button>
-                    </div>
+                <section class="panel" style="max-width:700px; margin: 10px auto;">
+                    <h2>Halaman Tidak Ada</h2>
+                    <p class="lead">${esc(text)}</p>
+                    <div class="row"><button class="btn btn-primary" id="goBackHome">Kembali Home</button></div>
                 </section>
             `;
-            document.getElementById("backHomeNF").addEventListener("click", () => navigate("/"));
+            document.getElementById("goBackHome").addEventListener("click", () => navigate("/"));
         }
 
-        function renderRoute() {
+        async function renderRoute() {
+            if (!sb && !ensureSupabaseConfigured()) {
+                setupMissingView();
+                return;
+            }
+
             const path = getCurrentPath();
 
             if (path === "/") {
@@ -875,34 +754,43 @@
             }
 
             if (path === "/admin") {
-                if (isAdminLoggedIn()) {
-                    adminDashboardView();
-                } else {
+                const sessionRes = await sb.auth.getSession();
+                currentUser = sessionRes.data.session ? sessionRes.data.session.user : null;
+                if (!currentUser) {
                     adminLoginView();
+                    return;
                 }
+                await adminDashboardView();
                 return;
             }
 
             if (path.startsWith("/profile/")) {
-                const ownerId = path.replace("/profile/", "").trim();
-                if (!ownerId) {
-                    notFoundView("Owner ID kosong.");
+                const shortId = path.replace("/profile/", "").trim();
+                if (!shortId) {
+                    notFoundView("ID owner kosong.");
                     return;
                 }
-                publicProfileView(ownerId);
+                await publicProfileView(shortId);
                 return;
             }
 
-            notFoundView("Route ini tidak tersedia di mode static.");
+            notFoundView("Route tidak ditemukan.");
         }
 
         document.getElementById("brandHome").addEventListener("click", () => navigate("/"));
         document.getElementById("goHome").addEventListener("click", () => navigate("/"));
         document.getElementById("goAdmin").addEventListener("click", () => navigate("/admin"));
 
-        window.addEventListener("popstate", renderRoute);
-        window.addEventListener("hashchange", renderRoute);
-        renderRoute();
+        window.addEventListener("popstate", () => { renderRoute(); });
+        window.addEventListener("hashchange", () => { renderRoute(); });
+
+        (async function bootstrap() {
+            const ready = await initSupabase();
+            if (!ready) {
+                return;
+            }
+            await renderRoute();
+        })();
     </script>
 </body>
 </html>
