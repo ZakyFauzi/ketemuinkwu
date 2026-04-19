@@ -346,6 +346,28 @@
             color: #4d6480;
         }
 
+        .video-card {
+            display: grid;
+            gap: 10px;
+        }
+
+        .video-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0a467f;
+        }
+
+        .video-frame iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -398,6 +420,10 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
@@ -583,7 +609,9 @@
         }
 
         @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; }
             .hero h1 { font-size: 30px; }
+            .hero-stat-ring { grid-template-columns: 1fr; }
             .grid { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr; }
             .game-grid { grid-template-columns: 1fr; }
@@ -594,6 +622,14 @@
             .impact-arrow { display: none; }
             .gallery-grid { grid-template-columns: 1fr; }
             .media-grid { grid-template-columns: 1fr; }
+            .video-frame { min-height: 220px; }
+            .cat-target {
+                width: 58px;
+                height: 58px;
+                font-size: 12px;
+                border-radius: 16px;
+            }
+            .game-stage { min-height: 170px; }
 
         }
     </style>
@@ -653,6 +689,171 @@
             return `${window.location.origin}/profile/${shortId}`;
         }
 
+        function setupCatGame({
+            stageId,
+            catId,
+            statusId,
+            scoreId,
+            timeId,
+            bestId,
+            hintId,
+            startId,
+            resetId,
+            storageKeyPrefix,
+            startMessage,
+            doneMessage = "Waktu habis.",
+            duration = 30,
+            moverDelay = 850
+        }) {
+            const gameStage = document.getElementById(stageId);
+            const catBtn = document.getElementById(catId);
+            const gameSlot = document.getElementById(statusId);
+            const scoreSlot = document.getElementById(scoreId);
+            const timeSlot = document.getElementById(timeId);
+            const bestSlot = document.getElementById(bestId);
+            const hintSlot = document.getElementById(hintId);
+            const startBtn = document.getElementById(startId);
+            const resetBtn = document.getElementById(resetId);
+
+            if (!gameStage || !catBtn || !gameSlot || !scoreSlot || !timeSlot || !bestSlot || !hintSlot || !startBtn || !resetBtn) {
+                return;
+            }
+
+            const bestKey = `ketemuin_best_${storageKeyPrefix}`;
+            const lastKey = `ketemuin_last_${storageKeyPrefix}`;
+
+            let score = 0;
+            let timeLeft = duration;
+            let running = false;
+            let timerId = null;
+            let moverId = null;
+
+            function readScore(key) {
+                return Number(localStorage.getItem(key) || 0);
+            }
+
+            function writeScore(key, value) {
+                localStorage.setItem(key, String(value));
+            }
+
+            function renderGameStatus(text) {
+                gameSlot.textContent = text;
+            }
+
+            function moveCat() {
+                const stageRect = gameStage.getBoundingClientRect();
+                const catRect = catBtn.getBoundingClientRect();
+                const catWidth = catRect.width || 70;
+                const catHeight = catRect.height || catWidth;
+                const maxLeft = Math.max(0, stageRect.width - catWidth);
+                const maxTop = Math.max(0, stageRect.height - catHeight);
+                const left = Math.floor(Math.random() * maxLeft);
+                const top = Math.floor(Math.random() * maxTop);
+                catBtn.style.left = `${left}px`;
+                catBtn.style.top = `${top}px`;
+            }
+
+            function refreshScore() {
+                scoreSlot.textContent = `Skor: ${score}`;
+            }
+
+            function refreshTimer() {
+                timeSlot.textContent = `Waktu: ${timeLeft}s`;
+            }
+
+            function refreshBest() {
+                bestSlot.textContent = `Best: ${readScore(bestKey)}`;
+            }
+
+            function stopLoops() {
+                if (timerId) {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+                if (moverId) {
+                    clearInterval(moverId);
+                    moverId = null;
+                }
+            }
+
+            function finishAttempt() {
+                running = false;
+                stopLoops();
+                const previousLast = readScore(lastKey);
+                const previousBest = readScore(bestKey);
+
+                writeScore(lastKey, score);
+                if (score > previousBest) {
+                    writeScore(bestKey, score);
+                    renderGameStatus(`${doneMessage} Skor baru terbaik: ${score}.`);
+                } else {
+                    renderGameStatus(`${doneMessage} Skor attempt ini: ${score}.`);
+                }
+
+                if (previousLast > 0 && score < previousLast) {
+                    hintSlot.innerHTML = 'Attempt ini lebih rendah dari sebelumnya. Coba motivasi ulang: <a href="https://www.youtube.com/watch?v=CC1pavDNUB0" target="_blank" rel="noopener noreferrer">video penyemangat</a>.';
+                } else {
+                    hintSlot.textContent = "";
+                }
+
+                refreshBest();
+            }
+
+            function resetAttemptUI() {
+                score = 0;
+                timeLeft = duration;
+                refreshScore();
+                refreshTimer();
+                hintSlot.textContent = "";
+                moveCat();
+            }
+
+            function startAttempt() {
+                resetAttemptUI();
+                running = true;
+                renderGameStatus(startMessage);
+
+                timerId = window.setInterval(() => {
+                    timeLeft -= 1;
+                    refreshTimer();
+                    if (timeLeft <= 0) {
+                        finishAttempt();
+                    }
+                }, 1000);
+
+                moverId = window.setInterval(() => {
+                    if (running) {
+                        moveCat();
+                    }
+                }, moverDelay);
+            }
+
+            catBtn.addEventListener("click", () => {
+                if (!running) {
+                    return;
+                }
+                score += 1;
+                refreshScore();
+                renderGameStatus(`Hit terkumpul: ${score}.`);
+                moveCat();
+            });
+
+            startBtn.addEventListener("click", () => {
+                stopLoops();
+                startAttempt();
+            });
+
+            resetBtn.addEventListener("click", () => {
+                running = false;
+                stopLoops();
+                resetAttemptUI();
+                renderGameStatus("Attempt direset. Tekan Mulai Attempt untuk bermain lagi.");
+            });
+
+            refreshBest();
+            resetAttemptUI();
+        }
+
         function ensureSupabaseConfigured() {
             const url = window.KETEMUIN_SUPABASE_URL;
             const key = window.KETEMUIN_SUPABASE_ANON_KEY;
@@ -705,6 +906,7 @@
                         <div class="row hero-actions">
                             <a class="btn btn-primary" href="#problem-section">Lihat Masalah</a>
                             <a class="btn btn-soft" href="#product-section">Lihat Produk</a>
+                            <a class="btn btn-soft" href="#game-section">Mainkan Game</a>
                         </div>
                     </div>
 
@@ -809,14 +1011,46 @@
                     <section class="panel">
                         <h3>Konten Media</h3>
                         <div class="media-grid">
-                            <div class="media-placeholder">
-                                <b>Placeholder Video YouTube</b>
-                                <p class="meta" style="margin-top:8px;">Nanti ganti dengan iframe atau link video pitch produk.</p>
+                            <div class="media-placeholder video-card">
+                                <div class="video-frame">
+                                    <iframe
+                                        src="https://www.youtube.com/embed/CC1pavDNUB0?rel=0&modestbranding=1"
+                                        title="Video penyemangat Ketemuin"
+                                        loading="lazy"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                                <div>
+                                    <b>Video Penyemangat</b>
+                                    <p class="meta" style="margin-top:8px;">Dipakai dulu sebagai placeholder video motivasi sambil menunggu video pitch produk final.</p>
+                                </div>
                             </div>
                             <div class="media-placeholder">
                                 <b>Placeholder Sistem</b>
                                 <p class="meta" style="margin-top:8px;">Nanti ganti dengan video demo sistem atau diagram alur interaksi user.</p>
                             </div>
+                        </div>
+                    </section>
+
+                    <section class="panel" id="game-section">
+                        <h3>Game Tap / Tangkap Kucing</h3>
+                        <p class="lead">Main sebentar untuk jaga mood. Kucing akan pindah terus selama attempt berjalan.</p>
+                        <div class="mini-game">
+                            <div class="game-stage" id="landingGameStage">
+                                <button class="cat-target" id="landingCatBtn" aria-label="Tangkap kucing">TAP</button>
+                            </div>
+                            <div class="row" style="margin-top:10px;">
+                                <button class="btn btn-primary" id="landingStartGameBtn">Mulai Attempt</button>
+                                <button class="btn btn-danger" id="landingResetGameBtn">Attempt Baru</button>
+                            </div>
+                            <div class="cat-score">
+                                <span id="landingGameStatus" class="game-state">Tekan Mulai Attempt untuk bermain.</span>
+                                <span id="landingGameTime">Waktu: 30s</span>
+                                <span id="landingGameScore">Skor: 0</span>
+                                <span id="landingBestScore">Best: 0</span>
+                            </div>
+                            <div id="landingGameHint" class="meta" style="margin-top:8px;"></div>
                         </div>
                     </section>
 
@@ -840,6 +1074,21 @@
                     </section>
                 </section>
             `;
+
+            setupCatGame({
+                stageId: "landingGameStage",
+                catId: "landingCatBtn",
+                statusId: "landingGameStatus",
+                scoreId: "landingGameScore",
+                timeId: "landingGameTime",
+                bestId: "landingBestScore",
+                hintId: "landingGameHint",
+                startId: "landingStartGameBtn",
+                resetId: "landingResetGameBtn",
+                storageKeyPrefix: "landing",
+                startMessage: "Attempt berjalan. Tangkap kucing sebanyak mungkin.",
+                doneMessage: "Waktu habis."
+            });
         }
 
         function adminLoginView() {
@@ -1202,146 +1451,20 @@
                 document.getElementById("gameSection").scrollIntoView({ behavior: "smooth", block: "start" });
             });
 
-                        const gameStage = document.getElementById("gameStage");
-            const catBtn = document.getElementById("catBtn");
-            const gameSlot = document.getElementById("gameStatus");
-            const scoreSlot = document.getElementById("gameScore");
-            const timeSlot = document.getElementById("gameTime");
-            const bestSlot = document.getElementById("bestScore");
-            const hintSlot = document.getElementById("gameHint");
-            const startBtn = document.getElementById("startGameBtn");
-            const resetBtn = document.getElementById("resetGameBtn");
-
-            const bestKey = `ketemuin_best_${owner.short_id}`;
-            const lastKey = `ketemuin_last_${owner.short_id}`;
-
-            let score = 0;
-            let timeLeft = 30;
-            let running = false;
-            let timerId = null;
-            let moverId = null;
-
-            function readScore(key) {
-                return Number(localStorage.getItem(key) || 0);
-            }
-
-            function writeScore(key, value) {
-                localStorage.setItem(key, String(value));
-            }
-
-            function renderGameStatus(text) {
-                gameSlot.textContent = text;
-            }
-
-            function moveCat() {
-                const stageRect = gameStage.getBoundingClientRect();
-                const maxLeft = Math.max(0, stageRect.width - 78);
-                const maxTop = Math.max(0, stageRect.height - 78);
-                const left = Math.floor(Math.random() * maxLeft);
-                const top = Math.floor(Math.random() * maxTop);
-                catBtn.style.left = `${left}px`;
-                catBtn.style.top = `${top}px`;
-            }
-
-            function refreshScore() {
-                scoreSlot.textContent = `Skor: ${score}`;
-            }
-
-            function refreshTimer() {
-                timeSlot.textContent = `Waktu: ${timeLeft}s`;
-            }
-
-            function refreshBest() {
-                bestSlot.textContent = `Best: ${readScore(bestKey)}`;
-            }
-
-            function stopLoops() {
-                if (timerId) {
-                    clearInterval(timerId);
-                    timerId = null;
-                }
-                if (moverId) {
-                    clearInterval(moverId);
-                    moverId = null;
-                }
-            }
-
-            function finishAttempt() {
-                running = false;
-                stopLoops();
-                const previousLast = readScore(lastKey);
-                const previousBest = readScore(bestKey);
-
-                writeScore(lastKey, score);
-                if (score > previousBest) {
-                    writeScore(bestKey, score);
-                    renderGameStatus(`Waktu habis. Skor baru terbaik: ${score}.`);
-                } else {
-                    renderGameStatus(`Waktu habis. Skor attempt ini: ${score}.`);
-                }
-
-                if (previousLast > 0 && score < previousLast) {
-                    hintSlot.innerHTML = 'Attempt ini lebih rendah dari sebelumnya. Coba motivasi ulang: <a href="https://www.youtube.com/watch?v=CC1pavDNUB0" target="_blank" rel="noopener noreferrer">video penyemangat</a>.';
-                } else {
-                    hintSlot.textContent = "";
-                }
-
-                refreshBest();
-            }
-
-            function resetAttemptUI() {
-                score = 0;
-                timeLeft = 30;
-                refreshScore();
-                refreshTimer();
-                hintSlot.textContent = "";
-                moveCat();
-            }
-
-            function startAttempt() {
-                resetAttemptUI();
-                running = true;
-                renderGameStatus("Attempt berjalan. Tangkap target sebanyak mungkin.");
-
-                timerId = window.setInterval(() => {
-                    timeLeft -= 1;
-                    refreshTimer();
-                    if (timeLeft <= 0) {
-                        finishAttempt();
-                    }
-                }, 1000);
-
-                moverId = window.setInterval(() => {
-                    if (running) {
-                        moveCat();
-                    }
-                }, 850);
-            }
-
-            catBtn.addEventListener("click", () => {
-                if (!running) {
-                    return;
-                }
-                score += 1;
-                refreshScore();
-                renderGameStatus(`Hit terkumpul: ${score}.`);
-                moveCat();
-            });
-
-            startBtn.addEventListener("click", () => {
-                stopLoops();
-                startAttempt();
-            });
-
-            resetBtn.addEventListener("click", () => {
-                running = false;
-                stopLoops();
-                resetAttemptUI();
-                renderGameStatus("Attempt direset. Tekan Mulai Attempt untuk bermain lagi.");
-            });
-
-            refreshBest();
-            resetAttemptUI();
+                        setupCatGame({
+                            stageId: "gameStage",
+                            catId: "catBtn",
+                            statusId: "gameStatus",
+                            scoreId: "gameScore",
+                            timeId: "gameTime",
+                            bestId: "bestScore",
+                            hintId: "gameHint",
+                            startId: "startGameBtn",
+                            resetId: "resetGameBtn",
+                            storageKeyPrefix: owner.short_id,
+                            startMessage: "Attempt berjalan. Tangkap target sebanyak mungkin.",
+                            doneMessage: "Waktu habis."
+                        });
 
             document.getElementById("sendBtn").addEventListener("click", async () => {
                 const finderName = document.getElementById("finderName").value.trim() || "Penemu";
@@ -1437,7 +1560,8 @@
             notFoundView("Route tidak ditemukan.");
         }
 
-        document.getElementById("brandHome").addEventListener("click", () => navigate("/"));
+        document.getElementById("brandHome").addEventListener("click", () => navigate("/"));
+
 
         window.addEventListener("popstate", () => { renderRoute(); });
         window.addEventListener("hashchange", () => { renderRoute(); });
