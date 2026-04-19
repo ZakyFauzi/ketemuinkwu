@@ -252,6 +252,43 @@
             margin: 14px 0 4px;
         }
 
+        .game-stage {
+            position: relative;
+            min-height: 190px;
+            margin-top: 10px;
+            border-radius: 14px;
+            border: 1px solid #d8e7fa;
+            background:
+                radial-gradient(circle at 20% 25%, rgba(255,255,255,.7) 0 9%, transparent 10%),
+                linear-gradient(180deg, #eff7ff 0%, #ffffff 100%);
+            overflow: hidden;
+        }
+
+        .cat-target {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #ffd36e 0%, #ff9f43 100%);
+            color: #5b3400;
+            font-size: 34px;
+            box-shadow: 0 10px 16px rgba(255, 159, 67, 0.25);
+            cursor: pointer;
+            transition: transform .16s ease, left .16s ease, top .16s ease;
+        }
+
+        .cat-target:hover { transform: scale(1.06); }
+
+        .cat-score {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
         .mini-game {
             background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
             border: 1px solid #d8e7fa;
@@ -460,7 +497,6 @@
                 <div class="owner-item">
                     <strong>${esc(owner.item_name)}</strong>
                     <div class="meta">Owner: ${esc(owner.owner_name)}</div>
-                    <div class="meta">WA: ${esc(owner.owner_whatsapp)}</div>
                     <div class="link">${esc(publicLink)}</div>
                     <div class="row" style="margin-top:8px;">
                         <button class="btn btn-soft" data-copy="${esc(publicLink)}">Copy Link</button>
@@ -663,37 +699,27 @@
                         </div>
                     </div>
 
-                    <div style="margin-top:10px;">
-                        <span class="pill">WA: ${esc(owner.owner_whatsapp)}</span>
-                        ${owner.owner_email ? `<span class="pill">Email: ${esc(owner.owner_email)}</span>` : ""}
-                        ${owner.owner_telegram ? `<span class="pill">Telegram: @${esc(owner.owner_telegram)}</span>` : ""}
-                    </div>
-
                     <div class="quick-actions">
-                        <button class="btn btn-primary" id="jumpShareBtn">Share Lokasi</button>
+                        <button class="btn btn-primary" id="jumpShareBtn">Bagikan Lokasi</button>
                         <button class="btn btn-soft" id="jumpNotifyBtn">Beri Tahu Pemilik</button>
                         <button class="btn btn-soft" id="jumpGameBtn">Game Ringan</button>
                     </div>
 
                     <div class="row" style="margin-top:10px;">
-                        <a class="btn btn-primary" href="${buildChannelLink(owner, "wa", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                        ${owner.owner_email ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "email", "Halo, saya menemukan barangmu.")}">Email</a>` : ""}
-                        ${owner.owner_telegram ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "telegram", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Telegram</a>` : ""}
+                        ${owner.owner_email ? `<a class="btn btn-primary" href="${buildChannelLink(owner, "email", "Halo, saya menemukan barangmu.")}">Kirim Email</a>` : ""}
+                        ${owner.owner_telegram ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "telegram", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Kirim Telegram</a>` : ""}
                     </div>
 
                     <hr class="divider" id="shareSection">
 
                     <h3>Bagikan Lokasi</h3>
-                    <p class="lead">Klik untuk mengirim titik lokasi penemuan.</p>
-                    <div class="row">
-                        <button class="btn btn-primary" id="shareLocBtn">Bagikan Lokasi</button>
-                    </div>
+                    <p class="lead">Klik sekali untuk menyimpan lokasi penemuan. Setelah itu kamu bisa lanjut kirim email atau Telegram ke pemilik.</p>
                     <div id="locStatus"></div>
 
                     <hr class="divider" id="notifySection">
 
                     <h3>Beri Tahu Pemilik</h3>
-                    <p class="lead">Satu pesan singkat, lalu channel komunikasi akan dibuka.</p>
+                    <p class="lead">Satu pesan singkat, lalu channel komunikasi via email atau Telegram akan dibuka.</p>
                     <div class="form-grid">
                         <div>
                             <label>Nama Kamu</label>
@@ -702,8 +728,7 @@
                         <div>
                             <label>Channel</label>
                             <select id="finderMethod">
-                                <option value="wa">WhatsApp</option>
-                                <option value="email" ${owner.owner_email ? "" : "disabled"}>Email</option>
+                                <option value="email" ${owner.owner_email ? "selected" : "disabled"}>Email</option>
                                 <option value="telegram" ${owner.owner_telegram ? "" : "disabled"}>Telegram</option>
                             </select>
                         </div>
@@ -720,33 +745,23 @@
                     <hr class="divider" id="gameSection">
 
                     <h3>Game Ringan</h3>
-                    <p class="lead">Buat penemu atau pemilik punya sesuatu yang singkat untuk dimainkan.</p>
+                    <p class="lead">Tangkap kucing yang pindah-pindah. Sederhana, cepat, dan lebih hidup.</p>
                     <div class="mini-game">
-                        <div class="meta">Tebak angka yang disembunyikan sistem. Pilih 1, 2, atau 3.</div>
-                        <div class="game-grid">
-                            <button class="btn btn-soft" data-guess="1">1</button>
-                            <button class="btn btn-soft" data-guess="2">2</button>
-                            <button class="btn btn-soft" data-guess="3">3</button>
+                        <div class="game-stage" id="gameStage">
+                            <button class="cat-target" id="catBtn" aria-label="Tangkap kucing">🐱</button>
                         </div>
                         <div class="row" style="margin-top:10px;">
                             <button class="btn btn-danger" id="resetGameBtn">Reset Game</button>
                         </div>
-                        <div id="gameStatus" class="game-state">Pilih angka untuk mulai.</div>
+                        <div class="cat-score">
+                            <span id="gameStatus" class="game-state">Kejar kucingnya.</span>
+                            <span id="gameScore">Skor: 0</span>
+                        </div>
                     </div>
                 </section>
             `;
 
-            document.getElementById("jumpShareBtn").addEventListener("click", () => {
-                document.getElementById("shareSection").scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-            document.getElementById("jumpNotifyBtn").addEventListener("click", () => {
-                document.getElementById("notifySection").scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-            document.getElementById("jumpGameBtn").addEventListener("click", () => {
-                document.getElementById("gameSection").scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-
-            document.getElementById("shareLocBtn").addEventListener("click", () => {
+            const shareLocation = () => {
                 const slot = document.getElementById("locStatus");
                 if (!navigator.geolocation) {
                     slot.innerHTML = status("err", "Browser tidak mendukung geolocation.");
@@ -755,35 +770,6 @@
 
                 slot.innerHTML = status("ok", "Mengambil lokasi...");
                 navigator.geolocation.getCurrentPosition(async (pos) => {
-
-            const gameSlot = document.getElementById("gameStatus");
-            let hiddenNumber = Math.floor(Math.random() * 3) + 1;
-            let score = 0;
-
-            function renderGameStatus(text) {
-                gameSlot.textContent = text;
-            }
-
-            function resetGame() {
-                hiddenNumber = Math.floor(Math.random() * 3) + 1;
-                renderGameStatus("Game di-reset. Silakan tebak lagi.");
-            }
-
-            document.querySelectorAll("[data-guess]").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const guess = Number(btn.getAttribute("data-guess"));
-                    if (guess === hiddenNumber) {
-                        score += 1;
-                        renderGameStatus(`Benar. Skor kamu ${score}. Angka baru sudah dibuat.`);
-                        hiddenNumber = Math.floor(Math.random() * 3) + 1;
-                        return;
-                    }
-
-                    renderGameStatus(`Belum tepat. Coba lagi. Skor ${score}.`);
-                });
-            });
-
-            document.getElementById("resetGameBtn").addEventListener("click", resetGame);
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
                     const maps = `https://maps.google.com/?q=${lat},${lng}`;
@@ -804,7 +790,66 @@
                 }, () => {
                     slot.innerHTML = status("err", "Izin lokasi ditolak atau gagal dibaca.");
                 });
+            };
+
+            document.getElementById("jumpShareBtn").addEventListener("click", () => {
+                shareLocation();
+                document.getElementById("shareSection").scrollIntoView({ behavior: "smooth", block: "start" });
             });
+            document.getElementById("jumpNotifyBtn").addEventListener("click", () => {
+                document.getElementById("notifySection").scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            document.getElementById("jumpGameBtn").addEventListener("click", () => {
+                document.getElementById("gameSection").scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+
+            const gameStage = document.getElementById("gameStage");
+            const catBtn = document.getElementById("catBtn");
+            const gameSlot = document.getElementById("gameStatus");
+            const scoreSlot = document.getElementById("gameScore");
+            let score = 0;
+            let catchCount = 0;
+
+            function renderGameStatus(text) {
+                gameSlot.textContent = text;
+            }
+
+            function moveCat() {
+                const stageRect = gameStage.getBoundingClientRect();
+                const maxLeft = Math.max(0, stageRect.width - 78);
+                const maxTop = Math.max(0, stageRect.height - 78);
+                const left = Math.floor(Math.random() * maxLeft);
+                const top = Math.floor(Math.random() * maxTop);
+                catBtn.style.left = `${left}px`;
+                catBtn.style.top = `${top}px`;
+            }
+
+            function refreshScore() {
+                scoreSlot.textContent = `Skor: ${score}`;
+            }
+
+            function resetGame() {
+                score = 0;
+                catchCount = 0;
+                refreshScore();
+                moveCat();
+                renderGameStatus("Kucing kabur lagi. Coba tangkap.");
+            }
+
+            catBtn.addEventListener("click", () => {
+                score += 1;
+                catchCount += 1;
+                refreshScore();
+                renderGameStatus(`Kucing tertangkap ${catchCount} kali. Dia pindah tempat.`);
+                moveCat();
+            });
+
+            document.getElementById("resetGameBtn").addEventListener("click", resetGame);
+
+            window.setTimeout(() => {
+                moveCat();
+                refreshScore();
+            }, 0);
 
             document.getElementById("sendBtn").addEventListener("click", async () => {
                 const finderName = document.getElementById("finderName").value.trim() || "Penemu";
