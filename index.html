@@ -979,10 +979,10 @@
                     <h2>Supabase config belum tersedia</h2>
                     <p class="lead">Aplikasi ini butuh file <b>supabase-config.js</b> saat runtime agar bisa terhubung ke Supabase.</p>
                     <div class="setup-note">
-                        File ini boleh tidak di-commit ke GitHub, tapi harus tetap ada di root yang di-serve saat deploy.
+                        File ini boleh tidak di-commit ke GitHub. Saat deploy, Netlify akan membangunnya otomatis dari environment variables.
                     </div>
                     <div class="setup-note">
-                        Copy dari supabase-config.example.js lalu isi KETEMUIN_SUPABASE_URL dan KETEMUIN_SUPABASE_ANON_KEY, kemudian letakkan di server/deploy root.
+                        Untuk lokal, copy dari supabase-config.example.js lalu isi KETEMUIN_SUPABASE_URL dan KETEMUIN_SUPABASE_ANON_KEY.
                     </div>
                 </section>
             `;

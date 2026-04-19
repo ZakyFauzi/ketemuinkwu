@@ -1,6 +1,10 @@
 [functions]
   directory = "netlify/functions"
 
+[build]
+  command = "npm run build"
+  publish = "."
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -43,9 +43,10 @@ npx netlify dev
 
 1. Push repo ke GitHub.
 2. Import project di Netlify.
-3. Build command: kosong.
-4. Publish directory: root project.
-5. Pastikan `netlify.toml` dan folder `netlify/functions` terbaca.
+3. Set environment variables `KETEMUIN_SUPABASE_URL` dan `KETEMUIN_SUPABASE_ANON_KEY` di Netlify.
+4. Build command dijalankan otomatis lewat `netlify.toml` untuk generate `supabase-config.js`.
+5. Publish directory: root project.
+6. Pastikan `netlify.toml` dan folder `netlify/functions` terbaca.
 
 ## Environment Variable Netlify
 
@@ -69,6 +70,6 @@ Set di Site Settings > Environment Variables:
 ## Catatan
 
 - Jangan commit `supabase-config.js` dan `.env`.
-- Walau tidak di-commit, `supabase-config.js` tetap harus tersedia di root yang di-serve saat deploy. Kalau tidak ada, app akan berhenti di layar setup.
+- Walau tidak di-commit, `supabase-config.js` tetap harus dibuat saat build deploy. Di project ini file tersebut digenerate otomatis dari environment variables.
 - Anon key Supabase boleh dipakai frontend, tapi RLS wajib aktif.
 

@@ -6,6 +6,9 @@
   "engines": {
     "node": ">=18"
   },
+  "scripts": {
+    "build": "node scripts/generate-supabase-config.js"
+  },
   "dependencies": {
     "nodemailer": "^6.10.0"
   }
