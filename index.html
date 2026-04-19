@@ -177,6 +177,118 @@
             border-radius: 12px;
             padding: 14px;
         }
+
+        .eyebrow {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #d9ecff;
+            margin-bottom: 10px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-actions { margin-top: 18px; }
+
+        .hero-visual {
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .hero-stat-ring {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            height: 100%;
+        }
+
+        .ring-card, .big-number-card {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid #d8e7fa;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 16px 24px rgba(10, 70, 127, 0.12);
+        }
+
+        .ring-card b, .big-number-card b {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            color: #0d4378;
+        }
+
+        .ring {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: #0d4378;
+            margin: 0 auto;
+            position: relative;
+            background: #edf5ff;
+        }
+
+        .ring::after {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .ring span { position: relative; z-index: 1; }
+
+        .ring-667 { background: conic-gradient(#0f6ecd 0 240deg, #dbeaf9 240deg 360deg); }
+        .ring-778 { background: conic-gradient(#27a2e4 0 280deg, #dbeaf9 280deg 360deg); }
+
+        .big-number-card { display: flex; flex-direction: column; justify-content: center; }
+
+        .big-number { display: block; font-size: 34px; line-height: 1; font-weight: 800; color: #0a467f; }
+
+        .mini-summary {
+            margin-top: 14px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .mini-summary div {
+            background: #f7fbff;
+            border: 1px solid #d8e7fa;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .mini-summary span {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #5e738a;
+            margin-bottom: 6px;
+        }
+
+        .mini-summary b {
+            color: #0d4378;
+            font-size: 14px;
+        }
         .impact-visual {
             display: grid;
             grid-template-columns: 1fr auto 1fr auto 1fr;
@@ -492,9 +604,7 @@
     <header class="header">
         <div class="header-wrap">
             <button class="brand" id="brandHome">Ketemuin</button>
-            <div class="row">
-                <button class="btn btn-soft" id="goHome">Home</button>
-                </div>
+            
         </div>
     </header>
 
@@ -585,78 +695,104 @@
             const app = document.getElementById("app");
             app.innerHTML = `
                 <section class="hero">
-                    <h1>Ketemuin membantu barang hilang kembali lebih cepat dengan NFC keychain</h1>
-                    <p>
-                        Ketemuin menggabungkan produk fisik dan platform digital agar penemu bisa langsung menghubungi
-                        pemilik barang secara aman, tanpa membuka data pribadi.
-                    </p>
+                    <div class="hero-copy">
+                        <span class="eyebrow">Smart NFC Lost & Found</span>
+                        <h1>Ketemuin membantu barang hilang kembali lebih cepat dan lebih aman.</h1>
+                        <p>
+                            Ketemuin menghubungkan produk fisik dan platform digital supaya penemu bisa langsung
+                            terhubung ke pemilik barang tanpa membuka data pribadi.
+                        </p>
+                        <div class="row hero-actions">
+                            <a class="btn btn-primary" href="#problem-section">Lihat Masalah</a>
+                            <a class="btn btn-soft" href="#product-section">Lihat Produk</a>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual panel">
+                        <div class="hero-stat-ring">
+                            <div class="ring-card">
+                                <div class="ring ring-667" aria-label="66,7 persen"><span>66,7%</span></div>
+                                <b>Pelajar & mahasiswa</b>
+                                <p>Sering kehilangan kunci atau barang kecil.</p>
+                            </div>
+                            <div class="ring-card">
+                                <div class="ring ring-778" aria-label="77,8 persen"><span>77,8%</span></div>
+                                <b>Penemu</b>
+                                <p>Ingin mengembalikan barang, tapi tidak tahu identitas pemilik.</p>
+                            </div>
+                            <div class="big-number-card">
+                                <span class="big-number">500 tahun</span>
+                                <b>Limbah PET</b>
+                                <p>Membutuhkan waktu sangat lama untuk terurai.</p>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <section class="landing-stack">
-                    <section class="panel">
+                    <section class="panel" id="problem-section">
                         <h2>Masalah Utama</h2>
-                        <div class="stats-grid" style="margin-top:10px;">
-                            <article class="stat-card">
-                                <b>66,7%</b>
-                                <p>Pelajar dan mahasiswa sering kehilangan kunci atau barang kecil.</p>
-                            </article>
-                            <article class="stat-card">
-                                <b>77,8%</b>
-                                <p>Penemu ingin mengembalikan barang, tetapi tidak tahu identitas pemilik.</p>
-                            </article>
-                            <article class="stat-card">
-                                <b>500 tahun</b>
-                                <p>Limbah plastik PET membutuhkan waktu sangat lama untuk terurai.</p>
-                            </article>
-                        </div>
+                        <p class="lead">Tiga tekanan utama yang membuat lost & found konvensional jadi lambat, anonim, dan kurang ramah lingkungan.</p>
                         <ul class="plain-list">
                             <li>Sistem lost & found manual masih tidak efektif.</li>
                             <li>Kontak pemilik sering tidak tersedia saat barang ditemukan.</li>
+                            <li>Material plastik konvensional memperpanjang beban lingkungan.</li>
                         </ul>
                     </section>
 
                     <section class="panel">
                         <h3>Visualisasi Alur Solusi</h3>
                         <div class="impact-visual">
-                            <div class="impact-node"><b>1. Barang ditemukan</b><p class="meta">Penemu menemukan barang di area kampus atau sekolah.</p></div>
-                            <div class="impact-arrow">-></div>
-                            <div class="impact-node"><b>2. Tap NFC</b><p class="meta">Smartphone membaca tag NFC pada keychain.</p></div>
-                            <div class="impact-arrow">-></div>
-                            <div class="impact-node"><b>3. Pemilik terhubung</b><p class="meta">Penemu langsung kirim lokasi atau pesan ke pemilik.</p></div>
+                            <div class="impact-node">
+                                <b>1. Barang ditemukan</b>
+                                <p class="meta">Penemu menemukan barang di area kampus, sekolah, atau tempat umum.</p>
+                            </div>
+                            <div class="impact-arrow">?</div>
+                            <div class="impact-node">
+                                <b>2. Tap NFC</b>
+                                <p class="meta">Smartphone membaca tag NFC pada keychain.</p>
+                            </div>
+                            <div class="impact-arrow">?</div>
+                            <div class="impact-node">
+                                <b>3. Pemilik terhubung</b>
+                                <p class="meta">Penemu langsung kirim lokasi atau pesan ke pemilik.</p>
+                            </div>
                         </div>
                     </section>
 
-                    <section class="two-col">
+                    <section class="two-col" id="product-section">
                         <article class="panel">
-                            <h3>Cara Kerja</h3>
-                            <ul class="plain-list">
-                                <li>Barang ditemukan.</li>
-                                <li>Penemu men-tap NFC keychain dengan smartphone.</li>
-                                <li>Sistem mengarahkan ke halaman kontak pemilik tanpa membuka data pribadi.</li>
-                            </ul>
-
-                            <h3 style="margin-top:14px;">Nilai Utama</h3>
+                            <h3>Ringkasan Solusi</h3>
                             <ul class="plain-list">
                                 <li>Mudah: cukup 1 tap NFC.</li>
                                 <li>Personal: profil owner bisa dikustom.</li>
                                 <li>Aman: privacy protected.</li>
                                 <li>Ramah lingkungan dengan rPET.</li>
                             </ul>
+
+                            <div class="mini-summary">
+                                <div>
+                                    <span>Produk</span>
+                                    <b>Smart keychain NFC</b>
+                                </div>
+                                <div>
+                                    <span>Material</span>
+                                    <b>rPET</b>
+                                </div>
+                                <div>
+                                    <span>Skala</span>
+                                    <b>Usaha mikro kecil</b>
+                                </div>
+                            </div>
                         </article>
 
                         <article class="panel">
-                            <h3>Model Usaha</h3>
-                            <ul class="plain-list">
-                                <li>Jenis usaha: teknologi berbasis produk fisik.</li>
-                                <li>Menggabungkan hardware keychain NFC dengan software platform digital.</li>
-                                <li>Skala usaha: usaha mikro kecil.</li>
-                            </ul>
-
-                            <h3 style="margin-top:14px;">Produk</h3>
-                            <ul class="plain-list">
-                                <li>Smart keychain berbasis NFC.</li>
-                                <li>Material ramah lingkungan (rPET).</li>
-                            </ul>
+                            <h3>Cara Kerja Singkat</h3>
+                            <ol class="plain-list">
+                                <li>Barang ditemukan.</li>
+                                <li>Penemu men-tap NFC keychain dengan smartphone.</li>
+                                <li>Sistem mengarahkan ke halaman kontak pemilik tanpa membuka data pribadi.</li>
+                            </ol>
                         </article>
                     </section>
 
@@ -674,11 +810,11 @@
                         <h3>Konten Media</h3>
                         <div class="media-grid">
                             <div class="media-placeholder">
-                                <b>Placeholder 1</b>
+                                <b>Placeholder Video YouTube</b>
                                 <p class="meta" style="margin-top:8px;">Nanti ganti dengan iframe atau link video pitch produk.</p>
                             </div>
                             <div class="media-placeholder">
-                                <b>Placeholder 2</b>
+                                <b>Placeholder Sistem</b>
                                 <p class="meta" style="margin-top:8px;">Nanti ganti dengan video demo sistem atau diagram alur interaksi user.</p>
                             </div>
                         </div>
@@ -705,7 +841,8 @@
                 </section>
             `;
         }
-function adminLoginView() {
+
+        function adminLoginView() {
             const app = document.getElementById("app");
             app.innerHTML = `
                 <section class="panel" style="max-width: 560px; margin: 10px auto;">
@@ -1300,9 +1437,7 @@ function adminLoginView() {
             notFoundView("Route tidak ditemukan.");
         }
 
-        document.getElementById("brandHome").addEventListener("click", () => navigate("/"));
-        document.getElementById("goHome").addEventListener("click", () => navigate("/"));
-
+        document.getElementById("brandHome").addEventListener("click", () => navigate("/"));
 
         window.addEventListener("popstate", () => { renderRoute(); });
         window.addEventListener("hashchange", () => { renderRoute(); });
