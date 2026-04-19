@@ -165,6 +165,7 @@
         .btn-primary:hover { background: #0c5fb0; }
         .btn-soft { background: #e8f2ff; color: #0d4a85; }
         .btn-danger { background: #ffe8ec; color: #8d2435; }
+        .btn-danger:hover { background: #ffd7de; }
 
         .status {
             margin-top: 10px;
@@ -244,10 +245,38 @@
             margin-bottom: 12px;
         }
 
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 14px 0 4px;
+        }
+
+        .mini-game {
+            background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+            border: 1px solid #d8e7fa;
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .game-state {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
         @media (max-width: 900px) {
             .hero h1 { font-size: 30px; }
             .grid { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr; }
+            .game-grid { grid-template-columns: 1fr; }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -436,6 +465,7 @@
                     <div class="row" style="margin-top:8px;">
                         <button class="btn btn-soft" data-copy="${esc(publicLink)}">Copy Link</button>
                         <button class="btn btn-soft" data-open="${esc(owner.short_id)}">Buka Profil</button>
+                        <button class="btn btn-danger" data-delete="${esc(owner.id)}" data-item="${esc(owner.item_name)}">Hapus</button>
                     </div>
                 </div>
             `;
@@ -560,6 +590,24 @@
                 list.querySelectorAll("[data-open]").forEach((btn) => {
                     btn.addEventListener("click", () => navigate(`/profile/${btn.getAttribute("data-open")}`));
                 });
+                list.querySelectorAll("[data-delete]").forEach((btn) => {
+                    btn.addEventListener("click", async () => {
+                        const ownerId = btn.getAttribute("data-delete");
+                        const itemName = btn.getAttribute("data-item") || "owner ini";
+                        if (!confirm(`Hapus ${itemName}? Semua pesan dan lokasi terkait juga ikut terhapus.`)) {
+                            return;
+                        }
+
+                        const deleted = await sb.from("owners").delete().eq("id", ownerId);
+                        if (deleted.error) {
+                            list.innerHTML = status("err", deleted.error.message);
+                            return;
+                        }
+
+                        await loadMyOwners();
+                        document.getElementById("ownerCreateStatus").innerHTML = status("ok", `${itemName} berhasil dihapus.`);
+                    });
+                });
             }
 
             await loadMyOwners();
@@ -605,6 +653,7 @@
 
             app.innerHTML = `
                 <section class="panel">
+                    <span class="pill">Ketemuin</span>
                     <div class="profile-head">
                         <div class="avatar">${avatar}</div>
                         <div>
@@ -620,13 +669,19 @@
                         ${owner.owner_telegram ? `<span class="pill">Telegram: @${esc(owner.owner_telegram)}</span>` : ""}
                     </div>
 
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" id="jumpShareBtn">Share Lokasi</button>
+                        <button class="btn btn-soft" id="jumpNotifyBtn">Beri Tahu Pemilik</button>
+                        <button class="btn btn-soft" id="jumpGameBtn">Game Ringan</button>
+                    </div>
+
                     <div class="row" style="margin-top:10px;">
                         <a class="btn btn-primary" href="${buildChannelLink(owner, "wa", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
                         ${owner.owner_email ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "email", "Halo, saya menemukan barangmu.")}">Email</a>` : ""}
                         ${owner.owner_telegram ? `<a class="btn btn-soft" href="${buildChannelLink(owner, "telegram", "Halo, saya menemukan barangmu.")}" target="_blank" rel="noopener noreferrer">Telegram</a>` : ""}
                     </div>
 
-                    <hr class="divider">
+                    <hr class="divider" id="shareSection">
 
                     <h3>Bagikan Lokasi</h3>
                     <p class="lead">Klik untuk mengirim titik lokasi penemuan.</p>
@@ -635,9 +690,10 @@
                     </div>
                     <div id="locStatus"></div>
 
-                    <hr class="divider">
+                    <hr class="divider" id="notifySection">
 
-                    <h3>Kirim Pesan</h3>
+                    <h3>Beri Tahu Pemilik</h3>
+                    <p class="lead">Satu pesan singkat, lalu channel komunikasi akan dibuka.</p>
                     <div class="form-grid">
                         <div>
                             <label>Nama Kamu</label>
@@ -660,8 +716,35 @@
                         </div>
                     </div>
                     <div id="msgStatus"></div>
+
+                    <hr class="divider" id="gameSection">
+
+                    <h3>Game Ringan</h3>
+                    <p class="lead">Buat penemu atau pemilik punya sesuatu yang singkat untuk dimainkan.</p>
+                    <div class="mini-game">
+                        <div class="meta">Tebak angka yang disembunyikan sistem. Pilih 1, 2, atau 3.</div>
+                        <div class="game-grid">
+                            <button class="btn btn-soft" data-guess="1">1</button>
+                            <button class="btn btn-soft" data-guess="2">2</button>
+                            <button class="btn btn-soft" data-guess="3">3</button>
+                        </div>
+                        <div class="row" style="margin-top:10px;">
+                            <button class="btn btn-danger" id="resetGameBtn">Reset Game</button>
+                        </div>
+                        <div id="gameStatus" class="game-state">Pilih angka untuk mulai.</div>
+                    </div>
                 </section>
             `;
+
+            document.getElementById("jumpShareBtn").addEventListener("click", () => {
+                document.getElementById("shareSection").scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            document.getElementById("jumpNotifyBtn").addEventListener("click", () => {
+                document.getElementById("notifySection").scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+            document.getElementById("jumpGameBtn").addEventListener("click", () => {
+                document.getElementById("gameSection").scrollIntoView({ behavior: "smooth", block: "start" });
+            });
 
             document.getElementById("shareLocBtn").addEventListener("click", () => {
                 const slot = document.getElementById("locStatus");
@@ -672,6 +755,35 @@
 
                 slot.innerHTML = status("ok", "Mengambil lokasi...");
                 navigator.geolocation.getCurrentPosition(async (pos) => {
+
+            const gameSlot = document.getElementById("gameStatus");
+            let hiddenNumber = Math.floor(Math.random() * 3) + 1;
+            let score = 0;
+
+            function renderGameStatus(text) {
+                gameSlot.textContent = text;
+            }
+
+            function resetGame() {
+                hiddenNumber = Math.floor(Math.random() * 3) + 1;
+                renderGameStatus("Game di-reset. Silakan tebak lagi.");
+            }
+
+            document.querySelectorAll("[data-guess]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const guess = Number(btn.getAttribute("data-guess"));
+                    if (guess === hiddenNumber) {
+                        score += 1;
+                        renderGameStatus(`Benar. Skor kamu ${score}. Angka baru sudah dibuat.`);
+                        hiddenNumber = Math.floor(Math.random() * 3) + 1;
+                        return;
+                    }
+
+                    renderGameStatus(`Belum tepat. Coba lagi. Skor ${score}.`);
+                });
+            });
+
+            document.getElementById("resetGameBtn").addEventListener("click", resetGame);
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
                     const maps = `https://maps.google.com/?q=${lat},${lng}`;
