@@ -59,6 +59,58 @@
             cursor: pointer;
         }
 
+        .toc-wrap {
+            position: relative;
+        }
+
+        .toc-btn {
+            border: 1px solid #c8d7e8;
+            background: #ffffff;
+            color: #0a467f;
+            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(10, 70, 127, 0.12);
+        }
+
+        .toc-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            width: 220px;
+            border: 1px solid #d8e2ee;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 12px 24px rgba(17, 48, 77, 0.18);
+            padding: 8px;
+            z-index: 50;
+        }
+
+        .toc-menu[hidden] {
+            display: none;
+        }
+
+        .toc-link {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px 11px;
+            color: #143e67;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .toc-link:hover {
+            background: #eef5ff;
+        }
+
         .row { display: flex; gap: 10px; flex-wrap: wrap; }
 
         .container {
@@ -200,8 +252,6 @@
             z-index: 1;
         }
 
-        .hero-actions { margin-top: 18px; }
-
         .hero-visual {
             padding: 0;
             border: none;
@@ -229,6 +279,12 @@
             margin-top: 12px;
             margin-bottom: 4px;
             color: #0d4378;
+        }
+
+        .ring-card p,
+        .big-number-card p {
+            color: #385a7b;
+            margin-bottom: 0;
         }
 
         .ring {
@@ -586,6 +642,16 @@
             margin-top: 10px;
             font-size: 13px;
             color: var(--muted);
+            flex-wrap: wrap;
+        }
+
+        .cat-score .game-state {
+            flex: 1 1 100%;
+            color: #355979;
+        }
+
+        .cat-score span {
+            flex: 1 1 120px;
         }
 
         .mini-game {
@@ -610,8 +676,12 @@
 
         @media (max-width: 900px) {
             .hero { grid-template-columns: 1fr; }
+            .hero { padding: 30px 16px; }
             .hero h1 { font-size: 30px; }
             .hero-stat-ring { grid-template-columns: 1fr; }
+            .ring { max-width: 210px; font-size: 22px; }
+            .ring::after { inset: 14px; }
+            .ring-card, .big-number-card { padding: 12px; }
             .grid { grid-template-columns: 1fr; }
             .form-grid { grid-template-columns: 1fr; }
             .game-grid { grid-template-columns: 1fr; }
@@ -630,6 +700,8 @@
                 border-radius: 16px;
             }
             .game-stage { min-height: 170px; }
+            .cat-score span { flex: 1 1 46%; }
+            .toc-menu { width: 200px; }
 
         }
     </style>
@@ -640,7 +712,15 @@
     <header class="header">
         <div class="header-wrap">
             <button class="brand" id="brandHome">Ketemuin</button>
-            
+            <div class="toc-wrap">
+                <button class="toc-btn" id="tocToggle" aria-label="Buka daftar isi" aria-expanded="false">☰</button>
+                <nav class="toc-menu" id="tocMenu" hidden>
+                    <button class="toc-link" data-section="problem-section">Masalah Utama</button>
+                    <button class="toc-link" data-section="product-section">Produk</button>
+                    <button class="toc-link" data-section="media-section">Konten Media</button>
+                    <button class="toc-link" data-section="game-section">Main Game</button>
+                </nav>
+            </div>
         </div>
     </header>
 
@@ -649,6 +729,7 @@
     <script>
         let sb = null;
         let currentUser = null;
+        let pendingLandingSection = "";
 
         function esc(v) {
             return String(v || "")
@@ -687,6 +768,37 @@
 
         function profileUrl(shortId) {
             return `${window.location.origin}/profile/${shortId}`;
+        }
+
+        function closeTocMenu() {
+            const tocBtn = document.getElementById("tocToggle");
+            const tocMenu = document.getElementById("tocMenu");
+            if (!tocBtn || !tocMenu) {
+                return;
+            }
+            tocMenu.hidden = true;
+            tocBtn.setAttribute("aria-expanded", "false");
+        }
+
+        function goToLandingSection(sectionId) {
+            if (!sectionId) {
+                return;
+            }
+
+            const jump = () => {
+                const target = document.getElementById(sectionId);
+                if (target) {
+                    target.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            };
+
+            if (getCurrentPath() !== "/") {
+                pendingLandingSection = sectionId;
+                navigate("/");
+                return;
+            }
+
+            jump();
         }
 
         function setupCatGame({
@@ -903,11 +1015,6 @@
                             Ketemuin menghubungkan produk fisik dan platform digital supaya penemu bisa langsung
                             terhubung ke pemilik barang tanpa membuka data pribadi.
                         </p>
-                        <div class="row hero-actions">
-                            <a class="btn btn-primary" href="#problem-section">Lihat Masalah</a>
-                            <a class="btn btn-soft" href="#product-section">Lihat Produk</a>
-                            <a class="btn btn-soft" href="#game-section">Mainkan Game</a>
-                        </div>
                     </div>
 
                     <div class="hero-visual panel">
@@ -1008,7 +1115,7 @@
                         </div>
                     </section>
 
-                    <section class="panel">
+                    <section class="panel" id="media-section">
                         <h3>Konten Media</h3>
                         <div class="media-grid">
                             <div class="media-placeholder video-card">
@@ -1035,7 +1142,7 @@
 
                     <section class="panel" id="game-section">
                         <h3>Ngegame Santai :v</h3>
-                        <p class="lead">Main sebentar untuk jaga mood. Kucing akan pindah terus selama attempt berjalan.</p>
+                        <p class="lead">Main sebentar untuk jaga mood. Button akan pindah terus selama attempt berjalan.</p>
                         <div class="mini-game">
                             <div class="game-stage" id="landingGameStage">
                                 <button class="cat-target" id="landingCatBtn" aria-label="Tangkap kucing">😹</button>
@@ -1089,6 +1196,17 @@
                 startMessage: "Attempt berjalan. Tangkap kucing sebanyak mungkin.",
                 doneMessage: "Waktu habis."
             });
+
+            if (pendingLandingSection) {
+                const targetSection = pendingLandingSection;
+                pendingLandingSection = "";
+                window.setTimeout(() => {
+                    const target = document.getElementById(targetSection);
+                    if (target) {
+                        target.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                }, 80);
+            }
         }
 
         function adminLoginView() {
@@ -1350,11 +1468,15 @@
 
                     <section class="profile-section" id="notifySection">
                         <h3>Beri Tahu Pemilik</h3>
-                        <p>Satu pesan singkat, lalu sistem akan kirim notifikasi otomatis ke email, Telegram, dan WhatsApp pemilik jika tersedia.</p>
+                        <p>Satu pesan singkat, lalu sistem akan kirim notifikasi otomatis ke email, Telegram, dan WhatsApp pemilik jika tersedia. Tambahkan kontak opsional supaya pemilik bisa menghubungi kamu balik.</p>
                         <div class="form-grid">
                             <div class="full">
                                 <label>Nama Kamu</label>
                                 <input id="finderName" placeholder="Nama kamu">
+                            </div>
+                            <div class="full">
+                                <label>Kontak Opsional (WA/IG/Email)</label>
+                                <input id="finderContact" placeholder="Contoh: 62812xxxxxx atau @username">
                             </div>
                             <div class="full">
                                 <label>Pesan</label>
@@ -1468,8 +1590,12 @@
 
             document.getElementById("sendBtn").addEventListener("click", async () => {
                 const finderName = document.getElementById("finderName").value.trim() || "Penemu";
+                const finderContact = document.getElementById("finderContact").value.trim();
                 const msg = document.getElementById("finderMessage").value.trim();
                 const slot = document.getElementById("msgStatus");
+                const packedMsg = finderContact
+                    ? `${msg}\n\nKontak penemu: ${finderContact}`
+                    : msg;
 
                 if (!msg) {
                     slot.innerHTML = status("err", "Pesan tidak boleh kosong.");
@@ -1480,7 +1606,7 @@
                     owner_id: owner.id,
                     finder_name: finderName,
                     finder_method: "auto",
-                    message_text: msg
+                    message_text: packedMsg
                 });
 
                 if (save.error) {
@@ -1495,7 +1621,7 @@
                         type: "message",
                         owner,
                         finderName,
-                        messageText: msg,
+                        messageText: packedMsg,
                         pageUrl: window.location.href
                     })
                 });
@@ -1508,6 +1634,7 @@
 
                 slot.innerHTML = status("ok", "Pesan tersimpan dan notifikasi terkirim ke channel yang tersedia.");
                 document.getElementById("finderMessage").value = "";
+                document.getElementById("finderContact").value = "";
             });
         }
 
@@ -1560,7 +1687,35 @@
             notFoundView("Route tidak ditemukan.");
         }
 
-        document.getElementById("brandHome").addEventListener("click", () => navigate("/"));
+        document.getElementById("brandHome").addEventListener("click", () => {
+            closeTocMenu();
+            navigate("/");
+        });
+
+        document.getElementById("tocToggle").addEventListener("click", () => {
+            const tocBtn = document.getElementById("tocToggle");
+            const tocMenu = document.getElementById("tocMenu");
+            const willOpen = tocMenu.hidden;
+            tocMenu.hidden = !willOpen;
+            tocBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        });
+
+        document.getElementById("tocMenu").querySelectorAll("[data-section]").forEach((item) => {
+            item.addEventListener("click", () => {
+                closeTocMenu();
+                goToLandingSection(item.getAttribute("data-section"));
+            });
+        });
+
+        document.addEventListener("click", (event) => {
+            const tocWrap = document.querySelector(".toc-wrap");
+            if (!tocWrap) {
+                return;
+            }
+            if (!tocWrap.contains(event.target)) {
+                closeTocMenu();
+            }
+        });
 
 
         window.addEventListener("popstate", () => { renderRoute(); });
