@@ -13,6 +13,11 @@ function json(statusCode, payload, headers = {}) {
   };
 }
 
+function getEnv(key) {
+  const value = process.env[key];
+  return String(value || "").trim();
+}
+
 function buildEmailText(type, owner, finderName, messageText, mapsUrl, pageUrl) {
   const itemName = owner?.item_name || "Barang";
   const ownerName = owner?.owner_name || "Pemilik";
@@ -133,18 +138,20 @@ exports.handler = async (event) => {
     return json(400, { error: "Invalid payload" });
   }
 
-  const emailSender = process.env.EMAIL_SENDER;
-  const emailPassword = process.env.EMAIL_PASSWORD;
-  const smtpServer = process.env.SMTP_SERVER;
-  const smtpPort = Number(process.env.SMTP_PORT || 587);
-  const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+  const emailSender = getEnv("EMAIL_SENDER");
+  const emailPassword = getEnv("EMAIL_PASSWORD");
+  const smtpServer = getEnv("SMTP_SERVER");
+  const smtpPort = Number(getEnv("SMTP_PORT") || 587);
+  const telegramToken = getEnv("TELEGRAM_BOT_TOKEN");
 
   const emailTarget = String(owner.owner_email || "").trim();
   const telegramTarget = String(owner.owner_telegram || "").trim();
+  const whatsappTarget = String(owner.owner_whatsapp || "").trim();
 
   const results = {
     email: { sent: false, skipped: true },
     telegram: { sent: false, skipped: true },
+    whatsapp: { sent: false, skipped: true },
   };
 
   const textForEmail = buildEmailText(type, owner, finderName, messageText, mapsUrl, pageUrl);
@@ -192,7 +199,22 @@ exports.handler = async (event) => {
     results.telegram = { sent: false, skipped: true, reason: "missing_telegram_config_or_target" };
   }
 
-  const success = Boolean(results.email.sent || results.telegram.sent);
+  if (whatsappTarget) {
+    try {
+      const whatsappLink = `https://api.whatsapp.com/send?phone=${encodeURIComponent(whatsappTarget)}&text=${encodeURIComponent(textForTelegram)}`;
+      results.whatsapp = {
+        sent: true,
+        note: "WhatsApp link generated (user must click to send)",
+        link: whatsappLink,
+      };
+    } catch (error) {
+      results.whatsapp = { sent: false, error: error.message };
+    }
+  } else {
+    results.whatsapp = { sent: false, skipped: true, reason: "missing_whatsapp_target" };
+  }
+
+  const success = Boolean(results.email.sent || results.telegram.sent || results.whatsapp.sent);
   if (!success) {
     return json(502, {
       error: "No notification channel succeeded",

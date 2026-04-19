@@ -252,6 +252,24 @@
             margin: 14px 0 4px;
         }
 
+        .profile-section {
+            margin: 20px 0;
+        }
+
+        .profile-section h3 {
+            font-size: 16px;
+            margin: 14px 0 8px;
+            color: #0d4378;
+            font-weight: 600;
+        }
+
+        .profile-section p {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
         .game-stage {
             position: relative;
             min-height: 190px;
@@ -528,7 +546,7 @@
                         </div>
                         <div>
                             <label>WhatsApp</label>
-                            <input id="fWa" placeholder="628123456789">
+                            <input id="fWa" placeholder="62812345678 (atau kosong)">
                         </div>
                         <div>
                             <label>Email</label>
@@ -536,7 +554,7 @@
                         </div>
                         <div>
                             <label>Telegram Chat ID / Channel</label>
-                            <input id="fTg" placeholder="@channelatau-chat-id">
+                            <input id="fTg" placeholder="@channel atau chat-id">
                         </div>
                         <div>
                             <label>Avatar URL</label>
@@ -581,8 +599,13 @@
 
                 const slot = document.getElementById("ownerCreateStatus");
 
-                if (!payload.owner_name || !payload.item_name || !payload.owner_whatsapp) {
-                    slot.innerHTML = status("err", "Nama owner, nama barang, dan WhatsApp wajib diisi.");
+                if (!payload.owner_name || !payload.item_name) {
+                    slot.innerHTML = status("err", "Nama owner dan nama barang wajib diisi.");
+                    return;
+                }
+
+                if (!payload.owner_email && !payload.owner_telegram && !payload.owner_whatsapp) {
+                    slot.innerHTML = status("err", "Minimal satu channel notifikasi diperlukan: Email, Telegram, atau WhatsApp.");
                     return;
                 }
 
@@ -688,35 +711,39 @@
                         <button class="btn btn-soft" id="jumpGameBtn">Game Ringan</button>
                     </div>
 
-                    <hr class="divider" id="shareSection">
+                    <section class="profile-section" id="shareSection">
+                        <h3>🌍 Bagikan Lokasi</h3>
+                        <p>Klik sekali untuk menyimpan lokasi penemuan. Sistem akan mengirim notifikasi otomatis ke semua channel pemilik.</p>
+                        <button class="btn btn-primary" id="shareLocBtn">Bagikan Lokasi Sekarang</button>
+                        <div id="locStatus" style="margin-top:10px;"></div>
+                    </section>
 
-                    <h3>Bagikan Lokasi</h3>
-                    <p class="lead">Klik sekali untuk menyimpan lokasi penemuan. Sistem akan mengirim notifikasi otomatis ke email dan Telegram pemilik jika tersedia.</p>
-                    <div id="locStatus"></div>
+                    <hr class="divider">
 
-                    <hr class="divider" id="notifySection">
-
-                    <h3>Beri Tahu Pemilik</h3>
-                    <p class="lead">Satu pesan singkat, lalu sistem akan kirim notifikasi otomatis ke email dan Telegram pemilik jika tersedia.</p>
-                    <div class="form-grid">
-                        <div>
-                            <label>Nama Kamu</label>
-                            <input id="finderName" placeholder="Nama kamu">
+                    <section class="profile-section" id="notifySection">
+                        <h3>📬 Beri Tahu Pemilik</h3>
+                        <p>Satu pesan singkat, lalu sistem akan kirim notifikasi otomatis ke email, Telegram, dan WhatsApp pemilik jika tersedia.</p>
+                        <div class="form-grid">
+                            <div class="full">
+                                <label>Nama Kamu</label>
+                                <input id="finderName" placeholder="Nama kamu">
+                            </div>
+                            <div class="full">
+                                <label>Pesan</label>
+                                <textarea id="finderMessage" placeholder="Halo, saya menemukan barangmu di..."></textarea>
+                            </div>
+                            <div class="full row">
+                                <button class="btn btn-primary" id="sendBtn">Kirim Notifikasi</button>
+                            </div>
                         </div>
-                        <div class="full">
-                            <label>Pesan</label>
-                            <textarea id="finderMessage" placeholder="Halo, saya menemukan barangmu di..."></textarea>
-                        </div>
-                        <div class="full row">
-                            <button class="btn btn-primary" id="sendBtn">Kirim</button>
-                        </div>
-                    </div>
-                    <div id="msgStatus"></div>
+                        <div id="msgStatus" style="margin-top:10px;"></div>
+                    </section>
 
-                    <hr class="divider" id="gameSection">
+                    <hr class="divider">
 
-                    <h3>Game Ringan</h3>
-                    <p class="lead">Tangkap kucing yang pindah-pindah. Sederhana, cepat, dan lebih hidup.</p>
+                    <section class="profile-section" id="gameSection">
+                        <h3>🎮 Game Ringan</h3>
+                        <p>Tangkap kucing yang pindah-pindah. Sederhana, cepat, dan lebih hidup.</p>
                     <div class="mini-game">
                         <div class="game-stage" id="gameStage">
                             <button class="cat-target" id="catBtn" aria-label="Tangkap kucing">🐱</button>
@@ -729,6 +756,7 @@
                             <span id="gameScore">Skor: 0</span>
                         </div>
                     </div>
+                    </section>
                 </section>
             `;
 
@@ -774,7 +802,7 @@
                         return;
                     }
 
-                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div><div class="status ok" style="margin-top:8px;">Notifikasi email/Telegram terkirim.</div>`;
+                    slot.innerHTML = `<div class="status ok">Lokasi tersimpan. <a href="${maps}" target="_blank" rel="noopener noreferrer">Buka Maps</a></div><div class="status ok" style="margin-top:8px;">✓ Notifikasi ke email, Telegram, dan WhatsApp sudah dikirim.</div>`;
                 }, () => {
                     slot.innerHTML = status("err", "Izin lokasi ditolak atau gagal dibaca.");
                 });
@@ -879,7 +907,7 @@
                     return;
                 }
 
-                slot.innerHTML = status("ok", "Pesan tersimpan dan notifikasi email/Telegram sudah dikirim.");
+                slot.innerHTML = status("ok", "✓ Pesan tersimpan dan notifikasi ke email, Telegram, dan WhatsApp sudah dikirim.");
                 document.getElementById("finderMessage").value = "";
             });
         }
