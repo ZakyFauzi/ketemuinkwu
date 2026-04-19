@@ -8,6 +8,11 @@
     <h2>Admin Panel (Secret)</h2>
     
     <div style="max-width: 700px; margin: auto; background: #34495e; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            {% if notify_status %}
+                <div style="background: #ecf9f1; color: #1e6b45; border: 1px solid #b6e5cd; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; text-align: left;">
+                    {{ notify_status }}
+                </div>
+            {% endif %}
             <h3 style="margin-top: 0; text-align: center;">Setup Tag Langsung (Admin)</h3>
             <p style="font-size: 13px; color: #bdc3c7; text-align: center; margin-top: -5px;">Isi data pembeli dari form order, lalu generate URL NFC unik siap pakai.</p>
 
@@ -48,6 +53,10 @@
                     <input type="text" id="nfcUrl" value="{{ blank_link }}" readonly onclick="this.select();" style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; background: #f9f9f9; font-size: 14px;">
                     <button id="copyBtn" onclick="copyURL()" style="background: #3498db; color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; white-space: nowrap; transition: 0.3s;">Copy</button>
                 </div>
+
+                <form action="/admin_test_notify/{{ tag_id }}" method="POST" style="margin-top: 10px;">
+                    <button type="submit" style="background: #2d5fd6; color: white; border: none; width: 100%; padding: 10px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">Test Notifikasi untuk Tag Ini</button>
+                </form>
             </div>
         {% endif %}
 

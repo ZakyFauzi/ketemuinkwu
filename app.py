@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, send_from_directory
 import sqlite3
 import uuid
 import requests
@@ -13,20 +13,31 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'kunci_rahasia_kewirausahaan_2026'
+app.secret_key = os.getenv('APP_SECRET_KEY', 'kunci_rahasia_kewirausahaan_2026')
 
 # ==========================================
 # KONFIGURASI NOTIFIKASI
 # ==========================================
 # TELEGRAM BOT
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', 'YOUR_BOT_TOKEN_HERE')
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', 'YOUR_BOT_TOKEN_HERE').strip()
 TELEGRAM_API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
 
 # EMAIL SMTP
-EMAIL_SENDER = os.getenv('EMAIL_SENDER', 'noreply@ketemuin.id')
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD', 'your_email_password')
+EMAIL_SENDER = os.getenv('EMAIL_SENDER', 'noreply@ketemuin.id').strip()
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD', 'your_email_password').replace(' ', '').strip()
 SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
+
+
+def notifications_ready():
+    telegram_ready = TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_TOKEN != 'YOUR_BOT_TOKEN_HERE'
+    email_ready = (
+        EMAIL_SENDER
+        and EMAIL_PASSWORD
+        and EMAIL_SENDER != 'noreply@ketemuin.id'
+        and EMAIL_PASSWORD != 'your_email_password'
+    )
+    return telegram_ready, email_ready
 
 
 def ensure_column(c, table_name, column_name, column_def):
@@ -110,23 +121,36 @@ init_db()
 def send_telegram_notification(telegram_id, message):
     """Kirim notifikasi via Telegram Bot"""
     if not telegram_id or telegram_id == '':
+        print('[NOTIFY][TELEGRAM] skipped: empty telegram id')
+        return False
+    if not TELEGRAM_BOT_TOKEN or TELEGRAM_BOT_TOKEN == 'YOUR_BOT_TOKEN_HERE':
+        print('[NOTIFY][TELEGRAM] skipped: TELEGRAM_BOT_TOKEN belum valid')
         return False
     
     try:
         payload = {
-            'chat_id': telegram_id,
+            'chat_id': telegram_id.strip(),
             'text': message,
             'parse_mode': 'HTML'
         }
         response = requests.post(TELEGRAM_API_URL, json=payload, timeout=5)
-        return response.status_code == 200
+        ok = response.status_code == 200
+        if not ok:
+            print(f"[NOTIFY][TELEGRAM] failed {response.status_code}: {response.text}")
+        else:
+            print('[NOTIFY][TELEGRAM] success')
+        return ok
     except Exception as e:
-        print(f"Telegram error: {e}")
+        print(f"[NOTIFY][TELEGRAM] error: {e}")
         return False
 
 def send_email_notification(email, subject, message_html):
     """Kirim notifikasi via Email"""
     if not email or email == '':
+        print('[NOTIFY][EMAIL] skipped: empty target email')
+        return False
+    if not EMAIL_SENDER or not EMAIL_PASSWORD or EMAIL_PASSWORD == 'your_email_password':
+        print('[NOTIFY][EMAIL] skipped: EMAIL_SENDER/EMAIL_PASSWORD belum valid')
         return False
     
     try:
@@ -142,9 +166,10 @@ def send_email_notification(email, subject, message_html):
             server.login(EMAIL_SENDER, EMAIL_PASSWORD)
             server.send_message(msg)
         
+        print('[NOTIFY][EMAIL] success')
         return True
     except Exception as e:
-        print(f"Email error: {e}")
+        print(f"[NOTIFY][EMAIL] error: {e}")
         return False
 
 def notify_owner(item, coords_lat=None, coords_lng=None):
@@ -170,13 +195,17 @@ def notify_owner(item, coords_lat=None, coords_lng=None):
         maps_link = f"https://www.google.com/maps?q={coords_lat},{coords_lng}"
         location_info = f"\n📍 <b>Lokasi:</b> <a href='{maps_link}'>Lihat di Maps</a>"
     
+    telegram_ready, email_ready = notifications_ready()
+
     # Telegram Message
+    base_url = request.host_url.rstrip('/')
+    info_link = f"{base_url}/found/{item_id}"
     telegram_message = (
         f"🔔 <b>Notifikasi Ketemuin!</b>\n\n"
         f"<b>{item_name}</b> kamu baru saja di-scan oleh seseorang! 👀\n"
         f"Penemu bisa menghubungimu melalui portal kami.\n"
         f"{location_info}\n\n"
-        f"🔗 Cek dashboard: ketemuin.me/found/{item_id}"
+        f"🔗 Buka halaman tag: {info_link}"
     )
     
     # Email Message
@@ -196,7 +225,7 @@ def notify_owner(item, coords_lat=None, coords_lng=None):
                 
                 {f'<p>📍 <b>Lokasi:</b> <a href="{maps_link}" style="color: #3498db;">Lihat di Google Maps</a></p>' if coords_lat else '<p>⏳ Lokasi belum dibagikan.</p>'}
                 
-                <a href="https://ketemuin.me/found/{item_id}" style="display: inline-block; background: #27ae60; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; margin-top: 15px;">
+                <a href="{info_link}" style="display: inline-block; background: #27ae60; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; margin-top: 15px;">
                     ➡️ Cek Dashboard
                 </a>
                 
@@ -210,11 +239,22 @@ def notify_owner(item, coords_lat=None, coords_lng=None):
     # Send notifications based on preference
     notification_method = item[9] if len(item) > 9 else 'both'
     
-    if notification_method in ['telegram', 'both']:
-        send_telegram_notification(item[8], telegram_message)  # owner_telegram_id
+    sent_telegram = False
+    sent_email = False
     
-    if notification_method in ['email', 'both']:
-        send_email_notification(item[7], email_subject, email_html)  # owner_email
+    if notification_method in ['telegram', 'both'] and telegram_ready:
+        sent_telegram = send_telegram_notification(item[8], telegram_message)  # owner_telegram_id
+
+    if notification_method in ['email', 'both'] and email_ready:
+        sent_email = send_email_notification(item[7], email_subject, email_html)  # owner_email
+
+    if notification_method in ['telegram', 'both'] and not telegram_ready:
+        print('[NOTIFY] telegram diminta tapi belum configured')
+
+    if notification_method in ['email', 'both'] and not email_ready:
+        print('[NOTIFY] email diminta tapi belum configured')
+
+    print(f"[NOTIFY] result -> telegram={sent_telegram}, email={sent_email}, method={notification_method}")
 
 
 def can_send_message(item_id, ip_address):
@@ -249,7 +289,8 @@ ADMIN_PIN = os.getenv('ADMIN_PIN', '9999')
 def admin():
     if not session.get('is_admin'):
         return render_template('admin_login.html')
-    return render_template('admin.html')
+    notify_status = request.args.get('notify_status', '')
+    return render_template('admin.html', notify_status=notify_status)
 
 @app.route('/admin_login', methods=['POST'])
 def admin_login():
@@ -318,6 +359,24 @@ def admin_create_tag():
 
     blank_link = f"{request.host_url}found/{unique_id}"
     return render_template('admin.html', blank_link=blank_link, tag_id=unique_id, created_ready=True)
+
+
+@app.route('/admin_test_notify/<item_id>', methods=['POST'])
+def admin_test_notify(item_id):
+    if not session.get('is_admin'):
+        return redirect(url_for('admin'))
+
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM items WHERE id = ?', (item_id,))
+    item = c.fetchone()
+    conn.close()
+
+    if not item:
+        return redirect(url_for('admin', notify_status='Tag tidak ditemukan'))
+
+    notify_owner(item)
+    return redirect(url_for('admin', notify_status=f'Test notifikasi dipicu untuk tag {item_id}. Cek log terminal.'))
 
 
 # ==========================================
@@ -474,6 +533,11 @@ def update_location(item_id):
         notify_owner(item, coords_lat=lat, coords_lng=lng)
     
     return jsonify({"status": "success", "message": "Lokasi berhasil dikirim ke pemilik"})
+
+
+@app.route('/Logo.svg')
+def logo_asset():
+    return send_from_directory('.', 'Logo.svg')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

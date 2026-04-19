@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ketemuin - Jangan Pernah Kehilangan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #95a5a6;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e8e8e8;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+        }
+
+        .profile-preview {
+            display: grid;
+            gap: 15px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h2 {
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+
+        .link-box {
+            background: #f0f4ff;
+            border: 1px solid #d0e0ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+        }
+
+        .link-box p {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .link-display {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .link-display input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .btn-copy {
+            padding: 10px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background: #5568d3;
+        }
+
+        .status-msg {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .qr-box {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 2px dashed #667eea;
+        }
+
+        .qr-box p {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .grid-2 .btn {
+            width: 100%;
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🔍 Ketemuin</h1>
+        <p>Jangan pernah kehilangan barang berharga</p>
+    </header>
+
+    <div class="container">
+        <!-- TAB NAVIGATION -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('owner')">📱 Setup Owner</button>
+            <button class="tab-btn" onclick="showTab('myprofile')">👤 Profil Saya</button>
+            <button class="tab-btn" onclick="showTab('import')">📥 Gunakan Tautan</button>
+        </div>
+
+        <!-- TAB 1: OWNER SETUP -->
+        <div id="owner" class="tab-content active">
+            <div class="card">
+                <h2 style="margin-bottom: 15px;">Daftarkan Profil Pemilik</h2>
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Isi data di bawah. Orang yang menemukan barangmu akan melihat informasi ini.</p>
+
+                <div class="form-group">
+                    <label>Nama Kamu</label>
+                    <input type="text" id="ownerName" placeholder="Cth: Budi Santoso" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nomor WhatsApp (dengan kode negara)</label>
+                    <input type="text" id="ownerWhatsapp" placeholder="Cth: 628123456789" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Kamu</label>
+                    <input type="email" id="ownerEmail" placeholder="Cth: budi@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto Profil (URL)</label>
+                    <input type="url" id="ownerAvatar" placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label>Bio Singkat (Opsional)</label>
+                    <textarea id="ownerBio" placeholder="Jelaskan siapa kamu atau tips menemukan barangmu"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Nama Barang</label>
+                    <input type="text" id="itemName" placeholder="Cth: Tas Laptop Merah" required>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveOwnerProfile()">💾 Simpan Profil</button>
+                <div id="saveStatus"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: MY PROFILE -->
+        <div id="myprofile" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 15px;">Profil Pemilik Ku</h2>
+                <div id="profileDisplayArea"></div>
+
+                <div class="link-box">
+                    <p>📎 Tautan Pemindai (Bagikan ke temanmu atau buat QR Code):</p>
+                    <div class="link-display">
+                        <input type="text" id="shareLink" readonly>
+                        <button class="btn-copy" onclick="copyLink()">Copy</button>
+                    </div>
+                </div>
+
+                <p style="font-size: 12px; color: #999; margin-top: 15px;">💡 Buat QR Code dari tautan ini di: https://qr-code-generator.com</p>
+            </div>
+        </div>
+
+        <!-- TAB 3: IMPORT/USE LINK -->
+        <div id="import" class="tab-content">
+            <div class="card">
+                <h2 style="margin-bottom: 15px;">Gunakan Tautan Pemindai</h2>
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Orang yang menemukan barangmu akan mengakses tautan khusus. Kamu bisa test di sini:</p>
+
+                <div class="form-group">
+                    <label>ID Pemilik (dari tautan)</label>
+                    <input type="text" id="ownerId" placeholder="Cth: abc123def456">
+                </div>
+
+                <button class="btn btn-primary" onclick="loadOwnerProfile()">🔍 Cari Profil Pemilik</button>
+                <div id="importStatus"></div>
+
+                <div id="foundProfileArea"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // HELPER: Show/Hide Tabs
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // SAVE OWNER PROFILE
+        function saveOwnerProfile() {
+            const data = {
+                name: document.getElementById('ownerName').value.trim(),
+                whatsapp: document.getElementById('ownerWhatsapp').value.trim(),
+                email: document.getElementById('ownerEmail').value.trim(),
+                avatar: document.getElementById('ownerAvatar').value.trim(),
+                bio: document.getElementById('ownerBio').value.trim(),
+                itemName: document.getElementById('itemName').value.trim(),
+                createdAt: new Date().toISOString(),
+                id: Math.random().toString(36).substr(2, 16)
+            };
+
+            if (!data.name || !data.whatsapp || !data.email || !data.itemName) {
+                showStatus('saveStatus', 'error', '❌ Isi semua field wajib!');
+                return;
+            }
+
+            localStorage.setItem('ownerProfile', JSON.stringify(data));
+            showStatus('saveStatus', 'success', '✅ Profil berhasil disimpan!');
+            document.getElementById('shareLink').value = window.location.origin + '?owner=' + data.id;
+            displayProfile();
+            setTimeout(() => showTab('myprofile'), 1000);
+        }
+
+        // DISPLAY PROFILE
+        function displayProfile() {
+            const profile = JSON.parse(localStorage.getItem('ownerProfile') || 'null');
+            const area = document.getElementById('profileDisplayArea');
+
+            if (!profile) {
+                area.innerHTML = '<p style="color: #999; text-align: center;">Belum ada profil. Setup di tab pertama.</p>';
+                return;
+            }
+
+            area.innerHTML = `
+                <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px;">
+                    <div class="profile-avatar">
+                        ${profile.avatar ? `<img src="${profile.avatar}" alt="Avatar">` : '👤'}
+                    </div>
+                    <div style="flex: 1;">
+                        <h3>${profile.name}</h3>
+                        <p>📦 ${profile.itemName}</p>
+                        <p>💬 ${profile.whatsapp}</p>
+                        <p>📧 ${profile.email}</p>
+                        ${profile.bio ? `<p style="font-style: italic; margin-top: 8px;">"${profile.bio}"</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // COPY LINK
+        function copyLink() {
+            const input = document.getElementById('shareLink');
+            input.select();
+            document.execCommand('copy');
+            alert('📋 Tautan sudah disalin!');
+        }
+
+        // LOAD OWNER PROFILE
+        function loadOwnerProfile() {
+            const ownerId = document.getElementById('ownerId').value.trim();
+            if (!ownerId) {
+                showStatus('importStatus', 'error', '❌ Masukkan ID Pemilik');
+                return;
+            }
+
+            const stored = JSON.parse(localStorage.getItem('ownerProfile') || 'null');
+            if (!stored || stored.id !== ownerId) {
+                showStatus('importStatus', 'error', '❌ Profil pemilik tidak ditemukan');
+                return;
+            }
+
+            showStatus('importStatus', 'success', '✅ Profil ditemukan!');
+            displayFoundProfile(stored);
+        }
+
+        function displayFoundProfile(profile) {
+            document.getElementById('foundProfileArea').innerHTML = `
+                <div class="card" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px;">Pemilik Barang</h3>
+                    <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px;">
+                        <div class="profile-avatar">
+                            ${profile.avatar ? `<img src="${profile.avatar}" alt="Avatar">` : '👤'}
+                        </div>
+                        <div style="flex: 1;">
+                            <h2>${profile.name}</h2>
+                            <p><strong>📦 Barang:</strong> ${profile.itemName}</p>
+                            ${profile.bio ? `<p style="margin: 10px 0;"><em>"${profile.bio}"</em></p>` : ''}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                        <a href="https://api.whatsapp.com/send?phone=${profile.whatsapp}&text=Halo! Aku menemukan barangmu" target="_blank" class="btn btn-primary" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">💬 Chat WhatsApp</a>
+                        <button class="btn btn-secondary" onclick="shareLocation('${profile.name}')">📍 Bagikan Lokasi</button>
+                    </div>
+
+                    <div id="locationStatus" style="margin-top: 15px;"></div>
+                </div>
+            `;
+        }
+
+        // SHARE LOCATION
+        function shareLocation(ownerName) {
+            if (!navigator.geolocation) {
+                showStatus('locationStatus', 'error', '❌ Browser tidak support geolocation');
+                return;
+            }
+
+            showStatus('locationStatus', 'info', '🔄 Mengambil lokasi...');
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const mapsLink = `https://maps.google.com?q=${lat},${lng}`;
+                    
+                    // Simpan ke localStorage (fake log)
+                    const log = {
+                        owner: ownerName,
+                        lat, lng,
+                        time: new Date().toLocaleString('id-ID'),
+                        mapsLink
+                    };
+                    const logs = JSON.parse(localStorage.getItem('locationLogs') || '[]');
+                    logs.push(log);
+                    localStorage.setItem('locationLogs', JSON.stringify(logs));
+
+                    showStatus('locationStatus', 'success', `✅ Lokasi dibagikan ke ${ownerName}!<br><a href="${mapsLink}" target="_blank" style="color: #667eea;">Lihat di Google Maps</a>`);
+                },
+                function(err) {
+                    showStatus('locationStatus', 'error', '❌ Izin lokasi ditolak');
+                }
+            );
+        }
+
+        // HELPER: Show Status Message
+        function showStatus(elementId, type, message) {
+            const el = document.getElementById(elementId);
+            el.className = 'status-msg status-' + type;
+            el.innerHTML = message;
+        }
+
+        // INIT
+        window.addEventListener('load', function() {
+            displayProfile();
+            document.getElementById('shareLink').value = window.location.origin + '?owner=' + (JSON.parse(localStorage.getItem('ownerProfile') || 'null')?.id || 'setup-first');
+        });
+    </script>
+</body>
+</html>
