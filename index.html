@@ -244,9 +244,9 @@
 
         .hero {
             display: grid;
-            grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
             gap: 16px;
-            align-items: stretch;
+            align-items: start;
             width: 100%;
         }
 
@@ -266,9 +266,17 @@
 
         .hero-stat-ring {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
             height: 100%;
+        }
+
+        .hero-stat-ring .big-number-card {
+            grid-column: 1 / -1;
+        }
+
+        .hero-stat-ring .ring {
+            max-width: 190px;
         }
 
         .ring-card, .big-number-card {
@@ -723,6 +731,9 @@
 
         @media (max-width: 1200px) {
             .hero h1 { font-size: 34px; }
+            .hero-stat-ring .ring {
+                max-width: 170px;
+            }
         }
 
         @media (max-width: 900px) {
