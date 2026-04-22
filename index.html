@@ -366,62 +366,102 @@
             font-weight: 700;
         }
 
-        .gallery-grid {
+        .highlight-box {
+            border: 1px solid #d8e7fa;
+            border-radius: 12px;
+            padding: 14px;
+            background: #f8fbff;
+        }
+
+        .stat-strip {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
-        .gallery-card {
-            border: 1px dashed #b9cade;
-            border-radius: 12px;
-            min-height: 170px;
-            background: #fbfdff;
+        .stat-strip .stat-card {
+            background: #ffffff;
+        }
+
+        .deck-slider {
+            margin-top: 10px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #d8e7fa;
+            background: #eef6ff;
+            position: relative;
+        }
+
+        .deck-track {
+            display: flex;
+            transition: transform 0.45s ease;
+        }
+
+        .deck-slide {
+            min-width: 100%;
+            background: #f7fbff;
+        }
+
+        .deck-slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .deck-caption {
+            padding: 12px 14px;
+            color: #20496f;
+            font-size: 14px;
+            border-top: 1px solid #d8e7fa;
+            background: #ffffff;
+        }
+
+        .deck-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 999px;
+            background: rgba(10, 70, 127, 0.82);
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
             display: grid;
             place-items: center;
-            text-align: center;
-            padding: 12px;
-            color: #5e738a;
-            font-size: 13px;
         }
 
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+        .deck-nav:hover {
+            background: rgba(10, 70, 127, 0.98);
+        }
+
+        .deck-prev { left: 10px; }
+        .deck-next { right: 10px; }
+
+        .deck-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
             margin-top: 10px;
         }
 
-        .media-placeholder {
-            border: 1px dashed #b9cade;
-            border-radius: 12px;
-            min-height: 220px;
-            background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
-            padding: 14px;
-            color: #4d6480;
+        .deck-dot {
+            width: 10px;
+            height: 10px;
+            border: none;
+            border-radius: 999px;
+            background: #b5cde6;
+            cursor: pointer;
         }
 
-        .video-card {
-            display: grid;
-            gap: 10px;
-        }
-
-        .video-frame {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0a467f;
-        }
-
-        .video-frame iframe {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
+        .deck-dot.active {
+            background: #0f6ecd;
+            width: 28px;
         }
 
         .form-grid {
@@ -690,9 +730,7 @@
             .team-grid { grid-template-columns: 1fr; }
             .impact-visual { grid-template-columns: 1fr; }
             .impact-arrow { display: none; }
-            .gallery-grid { grid-template-columns: 1fr; }
-            .media-grid { grid-template-columns: 1fr; }
-            .video-frame { min-height: 220px; }
+            .stat-strip { grid-template-columns: 1fr; }
             .cat-target {
                 width: 58px;
                 height: 58px;
@@ -716,8 +754,11 @@
                 <button class="toc-btn" id="tocToggle" aria-label="Buka daftar isi" aria-expanded="false">☰</button>
                 <nav class="toc-menu" id="tocMenu" hidden>
                     <button class="toc-link" data-section="problem-section">Masalah Utama</button>
-                    <button class="toc-link" data-section="product-section">Produk</button>
-                    <button class="toc-link" data-section="media-section">Konten Media</button>
+                    <button class="toc-link" data-section="validation-section">Validasi Pasar</button>
+                    <button class="toc-link" data-section="business-section">Ide Bisnis</button>
+                    <button class="toc-link" data-section="usp-section">Keunggulan</button>
+                    <button class="toc-link" data-section="pricing-section">Paket Harga</button>
+                    <button class="toc-link" data-section="deck-section">Galeri</button>
                     <button class="toc-link" data-section="game-section">Main Game</button>
                 </nav>
             </div>
@@ -1009,30 +1050,31 @@
             app.innerHTML = `
                 <section class="hero">
                     <div class="hero-copy">
-                        <span class="eyebrow">Smart NFC Lost & Found</span>
-                        <h1>Ketemuin membantu barang hilang kembali lebih cepat dan lebih aman.</h1>
+                        <span class="eyebrow">Ketemuin: Cerdas Jagain, Mudah Ketemuin</span>
+                        <h1>Solusi Smart, Safe, and Sustainable untuk mempertemukan penemu dan pemilik dalam satu kali tap.</h1>
                         <p>
-                            Ketemuin menghubungkan produk fisik dan platform digital supaya penemu bisa langsung
-                            terhubung ke pemilik barang tanpa membuka data pribadi.
+                            Ketemuin adalah aksesori pintar berbasis passive NFC dengan cangkang rPET.
+                            Fokusnya sederhana: mempercepat pengembalian barang hilang, menjaga privasi,
+                            dan memberi dampak lingkungan yang lebih baik.
                         </p>
                     </div>
 
                     <div class="hero-visual panel">
                         <div class="hero-stat-ring">
                             <div class="ring-card">
-                                <div class="ring ring-667" aria-label="66,7 persen"><span>66,7%</span></div>
-                                <b>Pelajar & mahasiswa</b>
-                                <p>Sering kehilangan kunci atau barang kecil.</p>
+                                <div class="ring ring-667" aria-label="67 persen"><span>67%</span></div>
+                                <b>Kehilangan Barang</b>
+                                <p>Mahasiswa sering kehilangan kunci dan barang kecil lainnya.</p>
                             </div>
                             <div class="ring-card">
                                 <div class="ring ring-778" aria-label="77,8 persen"><span>77,8%</span></div>
-                                <b>Penemu</b>
-                                <p>Ingin mengembalikan barang, tapi tidak tahu identitas pemilik.</p>
+                                <b>Hambatan Pengembalian</b>
+                                <p>Penemu bingung mengembalikan karena barang tidak memiliki identitas.</p>
                             </div>
                             <div class="big-number-card">
                                 <span class="big-number">500 tahun</span>
-                                <b>Limbah PET</b>
-                                <p>Membutuhkan waktu sangat lama untuk terurai.</p>
+                                <b>Krisis Limbah PET</b>
+                                <p>Botol PET butuh waktu sangat lama untuk terurai di lingkungan.</p>
                             </div>
                         </div>
                     </div>
@@ -1040,104 +1082,130 @@
 
                 <section class="landing-stack">
                     <section class="panel" id="problem-section">
-                        <h2>Masalah Utama</h2>
-                        <p class="lead">Tiga tekanan utama yang membuat lost & found konvensional jadi lambat, anonim, dan kurang ramah lingkungan.</p>
+                        <h2>Latar Belakang Masalah</h2>
+                        <p class="lead">Sistem lost-and-found konvensional sering gagal mempertemukan niat baik penemu dengan pemilik barang.</p>
                         <ul class="plain-list">
-                            <li>Sistem lost & found manual masih tidak efektif.</li>
-                            <li>Kontak pemilik sering tidak tersedia saat barang ditemukan.</li>
-                            <li>Material plastik konvensional memperpanjang beban lingkungan.</li>
+                            <li>67% mahasiswa sering kehilangan kunci atau barang kecil.</li>
+                            <li>77,8% penemu bingung karena tidak ada identitas pemilik pada barang.</li>
+                            <li>Botol PET bisa butuh 500 tahun untuk terurai.</li>
+                            <li>Model pelaporan manual lambat, terfragmentasi, dan minim data tindak lanjut.</li>
                         </ul>
                     </section>
 
-                    <section class="panel">
-                        <h3>Visualisasi Alur Solusi</h3>
-                        <div class="impact-visual">
-                            <div class="impact-node">
-                                <b>1. Barang ditemukan</b>
-                                <p class="meta">Penemu menemukan barang di area kampus, sekolah, atau tempat umum.</p>
+                    <section class="panel" id="validation-section">
+                        <h3>Validasi Pasar</h3>
+                        <p class="lead">Survei menunjukkan masalah ini nyata dan pasarnya siap menerima solusi digital yang privasi-first.</p>
+                        <div class="stat-strip">
+                            <div class="stat-card">
+                                <b>94,5%</b>
+                                <p>Sangat tertarik memakai smart keychain NFC yang menjaga privasi.</p>
                             </div>
-                            <div class="impact-arrow">➡️</div>
-                            <div class="impact-node">
-                                <b>2. Tap NFC</b>
-                                <p class="meta">Smartphone membaca tag NFC pada keychain.</p>
+                            <div class="stat-card">
+                                <b>83,3%</b>
+                                <p>Menganggap solusi penghubung digital ini penting untuk dimiliki.</p>
                             </div>
-                            <div class="impact-arrow">➡️</div>
-                            <div class="impact-node">
-                                <b>3. Pemilik terhubung</b>
-                                <p class="meta">Penemu langsung kirim lokasi atau pesan ke pemilik.</p>
+                            <div class="stat-card">
+                                <b>44,4%</b>
+                                <p>Menyatakan harga wajar berada pada rentang Rp40.000 - Rp50.000.</p>
                             </div>
                         </div>
                     </section>
 
-                    <section class="two-col" id="product-section">
+                    <section class="panel" id="business-section">
+                        <h3>Ide Bisnis: Ketemuin</h3>
+                        <p class="lead">Aksesori pintar berbasis passive NFC yang terenkapsulasi permanen pada cangkang plastik daur ulang rPET.</p>
+                        <div class="impact-visual">
+                            <div class="impact-node">
+                                <b>1. Passive NFC</b>
+                                <p class="meta">Penemu cukup tap tag menggunakan smartphone tanpa instal aplikasi tambahan.</p>
+                            </div>
+                            <div class="impact-arrow">➡️</div>
+                            <div class="impact-node">
+                                <b>2. Privacy by Design</b>
+                                <p class="meta">Identitas sensitif pemilik tidak dibuka, sistem mengarahkan lewat halaman aman.</p>
+                            </div>
+                            <div class="impact-arrow">➡️</div>
+                            <div class="impact-node">
+                                <b>3. Seamless Communication</b>
+                                <p class="meta">Penemu mengirim pesan/lokasi, pemilik menerima notifikasi realtime multi-channel.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="two-col" id="usp-section">
                         <article class="panel">
-                            <h3>Ringkasan Solusi</h3>
+                            <h3>Keunggulan Utama</h3>
                             <ul class="plain-list">
-                                <li>Mudah: cukup 1 tap NFC.</li>
-                                <li>Personal: profil owner bisa dikustom.</li>
-                                <li>Aman: privacy protected.</li>
-                                <li>Ramah lingkungan dengan rPET.</li>
+                                <li>Tanpa baterai: aktif lewat induksi smartphone, usia pakai lebih dari 10 tahun.</li>
+                                <li>Privasi maksimal: enkripsi AES dan URL redirect untuk meminimalkan ekspos data.</li>
+                                <li>Material super kuat: tahan banting/tahan cuaca, diproduksi dari 50% limbah botol PET.</li>
+                                <li>Personalisasi Gen Z: opsi aksesori tambahan agar lebih personal dan estetik.</li>
                             </ul>
 
                             <div class="mini-summary">
                                 <div>
-                                    <span>Produk</span>
-                                    <b>Smart keychain NFC</b>
+                                    <span>Teknologi</span>
+                                    <b>Passive NFC</b>
                                 </div>
                                 <div>
                                     <span>Material</span>
                                     <b>rPET</b>
                                 </div>
                                 <div>
-                                    <span>Skala</span>
-                                    <b>Usaha mikro kecil</b>
+                                    <span>Positioning</span>
+                                    <b>Smart, Safe, Sustainable</b>
                                 </div>
                             </div>
                         </article>
 
                         <article class="panel">
-                            <h3>Cara Kerja Singkat</h3>
+                            <h3 id="pricing-section">Paket Produk & Harga</h3>
                             <ol class="plain-list">
-                                <li>Barang ditemukan.</li>
-                                <li>Penemu men-tap NFC keychain dengan smartphone.</li>
-                                <li>Sistem mengarahkan ke halaman kontak pemilik tanpa membuka data pribadi.</li>
+                                <li><b>Bundling 1:</b> Rp24.000 (single keychain).</li>
+                                <li><b>Bundling 2:</b> Rp30.000 (keychain + aksesori tambahan).</li>
+                                <li><b>Bundling 3:</b> Rp45.000 (paket dua unit).</li>
                             </ol>
+                            <div class="highlight-box" style="margin-top:14px;">
+                                <b>Improvisasi strategi go-to-market</b>
+                                <p class="meta" style="margin-top:6px;">Mulai dari komunitas kampus dan organisasi mahasiswa, gunakan program pre-order bundling, lalu perluas ke toko aksesoris lokal dan marketplace.</p>
+                            </div>
                         </article>
                     </section>
 
-                    <section class="panel">
-                        <h3>Galeri Produk</h3>
-                        <p class="lead">Placeholder visual produk. Silakan ganti dengan foto asli nanti.</p>
-                        <div class="gallery-grid">
-                            <div class="gallery-card">Placeholder Gambar Produk 1<br>640x480</div>
-                            <div class="gallery-card">Placeholder Gambar Produk 2<br>640x480</div>
-                            <div class="gallery-card">Placeholder Gambar Produk 3<br>640x480</div>
-                        </div>
-                    </section>
-
-                    <section class="panel" id="media-section">
-                        <h3>Konten Media</h3>
-                        <div class="media-grid">
-                            <div class="media-placeholder video-card">
-                                <div class="video-frame">
-                                    <iframe
-                                        src="https://www.youtube.com/embed/CC1pavDNUB0?rel=0&modestbranding=1"
-                                        title="Video penyemangat Ketemuin"
-                                        loading="lazy"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
-                                <div>
-                                    <b>Video Penyemangat</b>
-                                    <p class="meta" style="margin-top:8px;">Dipakai dulu sebagai placeholder video motivasi sambil menunggu video pitch produk final.</p>
-                                </div>
+                    <section class="panel" id="deck-section">
+                        <h3>Galeri Slideshow Materi Ketemuin</h3>
+                        <p class="lead">Semua visual diambil langsung dari materi presentasi tim Ketemuin.</p>
+                        <div class="deck-slider" id="deckSlider">
+                            <div class="deck-track" id="deckTrack">
+                                <figure class="deck-slide">
+                                    <img src="/Gambar_Ketemuin/1.png" alt="Brand utama Ketemuin">
+                                    <figcaption class="deck-caption"><b>Brand Identity:</b> Cerdas Jagain, Mudah Ketemuin.</figcaption>
+                                </figure>
+                                <figure class="deck-slide">
+                                    <img src="/Gambar_Ketemuin/5.png" alt="Latar belakang masalah Ketemuin">
+                                    <figcaption class="deck-caption"><b>Latar Belakang:</b> Kehilangan barang, hambatan pengembalian, dan krisis limbah PET.</figcaption>
+                                </figure>
+                                <figure class="deck-slide">
+                                    <img src="/Gambar_Ketemuin/9.png" alt="Validasi pasar Ketemuin">
+                                    <figcaption class="deck-caption"><b>Validasi Pasar:</b> Ketertarikan tinggi, kebutuhan solusi nyata, dan kesiapan membayar.</figcaption>
+                                </figure>
+                                <figure class="deck-slide">
+                                    <img src="/Gambar_Ketemuin/3.png" alt="Ide bisnis Ketemuin">
+                                    <figcaption class="deck-caption"><b>Ide Bisnis:</b> Passive NFC, privacy by design, dan komunikasi mulus.</figcaption>
+                                </figure>
+                                <figure class="deck-slide">
+                                    <img src="/Gambar_Ketemuin/4.png" alt="Keunggulan utama Ketemuin">
+                                    <figcaption class="deck-caption"><b>Keunggulan:</b> Tanpa baterai, privasi maksimal, material kuat, personalisasi Gen Z.</figcaption>
+                                </figure>
+                                <figure class="deck-slide">
+                                    <img src="/Gambar_Ketemuin/7.png" alt="Paket produk Ketemuin">
+                                    <figcaption class="deck-caption"><b>Paket Produk:</b> Bundling 1 (24k), Bundling 2 (30k), Bundling 3 (45k).</figcaption>
+                                </figure>
                             </div>
-                            <div class="media-placeholder">
-                                <b>Placeholder Sistem</b>
-                                <p class="meta" style="margin-top:8px;">Nanti ganti dengan video demo sistem atau diagram alur interaksi user.</p>
-                            </div>
+                            <button class="deck-nav deck-prev" id="deckPrev" aria-label="Slide sebelumnya">‹</button>
+                            <button class="deck-nav deck-next" id="deckNext" aria-label="Slide berikutnya">›</button>
                         </div>
+                        <div class="deck-dots" id="deckDots"></div>
                     </section>
 
                     <section class="panel" id="game-section">
@@ -1173,14 +1241,74 @@
                     </section>
 
                     <section class="purchase-box">
-                        <h3 style="margin-bottom:6px; color:#8a4e00;">Link Pembelian</h3>
+                        <h3 style="margin-bottom:6px; color:#8a4e00;">Call to Action</h3>
                         <p style="font-size:14px; color:#8a4e00; margin-bottom:10px;">
-                            Link pembelian akan di-update setelah produk siap dijual.
+                            Ketemuin siap diuji coba untuk pilot batch kampus. Fokus berikutnya: validasi retensi, konversi repeat order, dan kemitraan komunitas.
                         </p>
-                        <a href="#" style="font-weight:700; color:#8a4e00; text-decoration:underline;">Ganti link pembelian di sini</a>
+                        <a href="#" style="font-weight:700; color:#8a4e00; text-decoration:underline;">Daftar pre-order dan kolaborasi kampus</a>
                     </section>
                 </section>
             `;
+
+            const deckTrack = document.getElementById("deckTrack");
+            const deckSlides = deckTrack ? Array.from(deckTrack.children) : [];
+            const deckDots = document.getElementById("deckDots");
+            const deckPrev = document.getElementById("deckPrev");
+            const deckNext = document.getElementById("deckNext");
+
+            if (deckSlides.length && deckDots && deckPrev && deckNext) {
+                let currentSlide = 0;
+                let autoplayId = null;
+
+                function renderDots() {
+                    deckDots.innerHTML = deckSlides
+                        .map((_, idx) => `<button class="deck-dot ${idx === 0 ? "active" : ""}" data-slide="${idx}" aria-label="Buka slide ${idx + 1}"></button>`)
+                        .join("");
+                }
+
+                function setSlide(index) {
+                    currentSlide = (index + deckSlides.length) % deckSlides.length;
+                    deckTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    deckDots.querySelectorAll(".deck-dot").forEach((dot, idx) => {
+                        dot.classList.toggle("active", idx === currentSlide);
+                    });
+                }
+
+                function startAutoplay() {
+                    stopAutoplay();
+                    autoplayId = window.setInterval(() => {
+                        setSlide(currentSlide + 1);
+                    }, 5000);
+                }
+
+                function stopAutoplay() {
+                    if (autoplayId) {
+                        clearInterval(autoplayId);
+                        autoplayId = null;
+                    }
+                }
+
+                renderDots();
+                setSlide(0);
+                startAutoplay();
+
+                deckPrev.addEventListener("click", () => setSlide(currentSlide - 1));
+                deckNext.addEventListener("click", () => setSlide(currentSlide + 1));
+                deckDots.querySelectorAll(".deck-dot").forEach((dot) => {
+                    dot.addEventListener("click", () => {
+                        const idx = Number(dot.getAttribute("data-slide") || 0);
+                        setSlide(idx);
+                    });
+                });
+
+                const slider = document.getElementById("deckSlider");
+                if (slider) {
+                    slider.addEventListener("mouseenter", stopAutoplay);
+                    slider.addEventListener("mouseleave", startAutoplay);
+                    slider.addEventListener("touchstart", stopAutoplay, { passive: true });
+                    slider.addEventListener("touchend", startAutoplay, { passive: true });
+                }
+            }
 
             setupCatGame({
                 stageId: "landingGameStage",
